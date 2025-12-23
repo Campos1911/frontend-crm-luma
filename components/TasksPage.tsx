@@ -10,7 +10,7 @@ import { TaskDetailModal } from './TaskDetailModal';
 import { TasksCalendarView } from './TasksCalendarView';
 import { TaskFormModal } from './TaskFormModal';
 
-// Related Object Modalss
+// Related Object Modals
 import { LeadDetailModal } from './LeadDetailModal';
 import { ContactDetailModal } from './ContactDetailModal';
 import { AccountDetailModal } from './AccountDetailModal';
