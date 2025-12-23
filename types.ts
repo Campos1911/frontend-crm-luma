@@ -1,6 +1,12 @@
 
 export type StatusColor = 'blue' | 'orange' | 'purple' | 'yellow' | 'green' | 'red';
 
+export interface NavItem {
+    icon: string;
+    text: string;
+    path: string;
+}
+
 export interface ExperimentalClass {
     id: string;
     date: string;
@@ -15,10 +21,10 @@ export interface CardData {
     amount: string;
     status: string;
     statusColor: StatusColor;
-    salesType?: 'B2B' | 'B2C' | 'B2G';
-    closeDate?: string; // ISO string YYYY-MM-DD
+    salesType?: string;
+    type?: string;
+    closeDate?: string;
     lossReason?: string;
-    type?: 'Novo negócio' | 'Recompra' | 'Reativação';
     experimentalClasses?: ExperimentalClass[];
 }
 
@@ -34,15 +40,14 @@ export interface LeadCardData {
     email: string;
     phone: string;
     source: string;
-    note?: string;
-    // Extended Details
     company?: string;
-    priority?: 'Alta' | 'Média' | 'Baixa';
+    priority?: string;
     medium?: string;
     campaign?: string;
     term?: string;
     content?: string;
-    disqualificationReason?: string; // Novo campo
+    note?: string;
+    disqualificationReason?: string;
 }
 
 export interface LeadColumnData {
@@ -51,33 +56,14 @@ export interface LeadColumnData {
     cards: LeadCardData[];
 }
 
-export interface NavItem {
-    icon: string;
-    text: string;
-    path: string;
-}
-
-export interface ProductItem {
-    id: string;
-    label: string;
-    tag?: string;
-    quantity: string;
-}
-
-export interface ProductGroup {
-    id: string;
-    name: string;
-    quantity: string;
-    price: string;
-    items: ProductItem[];
-}
-
 export interface PaymentInfo {
     installments: string;
     expiryDate: string;
     paymentMethods: string;
     contractPeriod: string;
-    contractStatus?: string; // Novo campo
+    contractStatus?: string;
+    description?: string;
+    automatedContract?: boolean;
 }
 
 export interface ProposalTask {
@@ -88,18 +74,33 @@ export interface ProposalTask {
     isNew?: boolean;
 }
 
+export interface ProductItem {
+    id: string;
+    label: string;
+    quantity: string;
+    tag?: string;
+}
+
+export interface ProductGroup {
+    id: string;
+    name: string;
+    quantity: string;
+    price: string;
+    items: ProductItem[];
+}
+
 export interface Proposal {
     id: string;
-    opportunityId: string; // Foreign Key to Opportunity
+    opportunityId: string;
     title: string;
     displayId: string;
-    status: 'Aceita' | 'Substituída' | 'Rascunho' | 'Enviada' | 'Revisão' | 'Rejeitada' | 'Cancelada';
+    status: 'Rascunho' | 'Enviada' | 'Revisão' | 'Aceita' | 'Rejeitada' | 'Cancelada' | 'Substituída';
     value: string;
     date: string;
-    products?: ProductGroup[];
-    discount?: string;
     paymentInfo?: PaymentInfo;
-    tasks?: ProposalTask[]; // Novo campo
+    discount?: string;
+    products?: ProductGroup[];
+    tasks?: ProposalTask[];
 }
 
 export interface ProposalCardData extends Proposal {
@@ -113,47 +114,6 @@ export interface ProposalColumnData {
     cards: ProposalCardData[];
 }
 
-export interface Student {
-    id: string;
-    name: string;
-    role: string;
-    financial: boolean;
-    pedagogical: boolean;
-}
-
-export interface Guardian {
-    id: string;
-    name: string;
-    role: string; // e.g. 'Pai', 'Mãe'
-    phone?: string; // Novo campo
-    isFinancial: boolean;
-    isPedagogical: boolean;
-}
-
-export interface Note {
-    id: string;
-    content: string;
-    date: string; // ISO String or YYYY-MM-DD
-    author: string;
-}
-
-// New Interface for the Students Page
-export interface StudentPageData {
-    id: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string; // YYYY-MM-DD
-    school: string;
-    financialGuardian: string;
-    email?: string; // Used for Avatar generation
-    schoolYear?: string;
-    gender?: string;
-    // Extended fields
-    specificities?: string[];
-    guardians?: Guardian[];
-    notes?: Note[]; // Novo campo
-}
-
 export interface Address {
     street: string;
     number: string;
@@ -161,6 +121,14 @@ export interface Address {
     state: string;
     postalCode: string;
     country: string;
+}
+
+export interface ContactStudentLink {
+    id: string;
+    name: string;
+    role: string;
+    financial: boolean;
+    pedagogical: boolean;
 }
 
 export interface Contact {
@@ -171,24 +139,53 @@ export interface Contact {
     email: string;
     cpf: string;
     country: string;
-    role?: string; // Nova propriedade para 'Função'
-    // Extended Fields for Detail View
     dateOfBirth?: string;
     address?: Address;
-    students?: Student[];
+    students?: ContactStudentLink[];
+    role?: string;
+}
+
+export interface Guardian {
+    id: string;
+    name: string;
+    role: string;
+    isFinancial: boolean;
+    isPedagogical: boolean;
+    phone?: string;
+}
+
+export interface Note {
+    id: string;
+    content: string;
+    date: string;
+    author: string;
+}
+
+export interface StudentPageData {
+    id: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: string;
+    schoolYear: string;
+    school: string;
+    financialGuardian: string;
+    email: string;
+    specificities: string[];
+    guardians: Guardian[];
+    notes?: Note[];
 }
 
 export interface Account {
     id: string;
     name: string;
-    type: string; // 'Física' | 'Jurídica' | 'Governo' | etc.
+    type: string;
     phone: string;
     email: string;
     mainContact: string;
-    // Extended
-    manager?: string;
-    owner?: string;
-    cpfCnpj?: string;
+    manager: string;
+    owner: string;
+    cpfCnpj: string;
 }
 
 export type RelatedObjectType = 'conta' | 'contato' | 'oportunidade' | 'lead';
@@ -196,12 +193,12 @@ export type RelatedObjectType = 'conta' | 'contato' | 'oportunidade' | 'lead';
 export interface GlobalTask {
     id: string;
     title: string;
-    dueDate: string; // YYYY-MM-DD
+    dueDate: string;
     isCompleted: boolean;
     assignee: string;
     relatedObjectType: RelatedObjectType;
     relatedObjectName: string;
-    createdAt: string; // YYYY-MM-DD
+    createdAt: string;
     completedAt?: string;
     description?: string;
 }

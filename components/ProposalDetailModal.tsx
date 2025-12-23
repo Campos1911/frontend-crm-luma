@@ -46,7 +46,9 @@ const DEFAULT_PAYMENT_DATA: PaymentInfo = {
     expiryDate: '2024-12-31',
     paymentMethods: 'Cartão de Crédito, Boleto',
     contractPeriod: '12 meses',
-    contractStatus: 'Pendente'
+    contractStatus: 'Pendente',
+    description: '',
+    automatedContract: true
 };
 
 const PAYMENT_METHOD_OPTIONS = [
@@ -563,9 +565,9 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
                                 {/* Left Column (2 spans) */}
                                 <div className="lg:col-span-2 flex flex-col gap-8">
                                     
-                                    {/* Formas de Pagamento - EDITABLE */}
+                                    {/* Informações da Proposta - EDITABLE */}
                                     <div className="flex flex-col rounded-lg border border-[#dddce5] dark:border-[#686388] bg-[#FFFFFF] dark:bg-[#131121] p-6 shadow-sm">
-                                        <h2 className="text-[#121118] dark:text-[#FFFFFF] text-xl font-bold leading-tight tracking-[-0.015em] mb-4">Formas de Pagamento</h2>
+                                        <h2 className="text-[#121118] dark:text-[#FFFFFF] text-xl font-bold leading-tight tracking-[-0.015em] mb-4">Informações da proposta</h2>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                                             
                                             <div className="flex flex-col gap-1 border-t border-solid border-[#dddce5] dark:border-[#686388] py-4">
@@ -653,6 +655,44 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
                                                     <div className="w-full p-2 text-sm font-medium text-[#121118] dark:text-[#FFFFFF] bg-transparent border border-transparent">
                                                         {formData.contractPeriod}
                                                     </div>
+                                                )}
+                                            </div>
+
+                                            <div className="flex flex-col gap-1 border-t border-solid border-[#dddce5] dark:border-[#686388] py-4">
+                                                <p className="text-[#686388] dark:text-[#dddce5] text-sm font-normal leading-normal">Contrato automatizado</p>
+                                                {isEditing ? (
+                                                    <div className="flex items-center h-[38px]">
+                                                         <label className="flex items-center cursor-pointer gap-2">
+                                                            <input 
+                                                                type="checkbox"
+                                                                checked={formData.automatedContract !== false}
+                                                                onChange={(e) => setFormData(prev => ({ ...prev, automatedContract: e.target.checked }))}
+                                                                className="h-5 w-5 rounded border-gray-300 text-[#6258A6] focus:ring-[#6258A6] cursor-pointer"
+                                                            />
+                                                            <span className="text-sm font-medium text-[#121118] dark:text-[#FFFFFF]">Sim</span>
+                                                        </label>
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-full p-2 text-sm font-medium text-[#121118] dark:text-[#FFFFFF] bg-transparent border border-transparent">
+                                                        {formData.automatedContract !== false ? 'Sim' : 'Não'}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="flex flex-col gap-1 border-t border-solid border-[#dddce5] dark:border-[#686388] py-4 sm:col-span-2">
+                                                <p className="text-[#686388] dark:text-[#dddce5] text-sm font-normal leading-normal">Descrição</p>
+                                                {isEditing ? (
+                                                    <textarea
+                                                        value={formData.description || ''}
+                                                        onChange={(e) => handleInputChange('description', e.target.value)}
+                                                        className={`${inputClass} resize-none`}
+                                                        rows={4}
+                                                        placeholder="Adicione uma descrição..."
+                                                    />
+                                                ) : (
+                                                    <p className="text-[#121118] dark:text-[#FFFFFF] text-sm font-medium leading-normal whitespace-pre-wrap">
+                                                        {formData.description || '-'}
+                                                    </p>
                                                 )}
                                             </div>
 
