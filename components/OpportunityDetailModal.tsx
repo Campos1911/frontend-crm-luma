@@ -8,6 +8,7 @@ import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import { LossReasonModal } from './LossReasonModal';
 import { ProposalDetailModal } from './ProposalDetailModal';
 import { AccountDetailModal } from './AccountDetailModal';
+import { AlertModal } from './ui/AlertModal';
 import { getProposalsByOpportunity, updateProposal, addProposal, getAccounts, updateAccount, deleteAccount } from '../dataStore';
 import { INITIAL_STUDENTS_LIST } from '../constants';
 
@@ -77,6 +78,8 @@ const STAGES = [
     'Perdido'
 ];
 
+const RESTRICTED_STAGES = ['Assinatura de Contrato', 'Aguardando Pagamento', 'Ganho'];
+
 const DISCIPLINES = [
     'Matemática',
     'Português',
@@ -122,6 +125,13 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isLossModalOpen, setIsLossModalOpen] = useState(false);
     const [formData, setFormData] = useState<CardData | null>(null);
+
+    // Alert Modal State
+    const [validationAlert, setValidationAlert] = useState<{isOpen: boolean, title: string, message: string}>({
+        isOpen: false,
+        title: '',
+        message: ''
+    });
 
     // Account Modal State
     const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
@@ -194,6 +204,7 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
             setIsSchedulingClass(false);
             setEditingClassId(null);
             setIsAccountDropdownOpen(false);
+            setValidationAlert({ isOpen: false, title: '', message: '' });
         }
     }, [isOpen]);
 
@@ -237,6 +248,19 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
 
     const handleStageClick = (stage: string) => {
         if (stage !== currentStage) {
+            // Check restrictions
+            if (RESTRICTED_STAGES.includes(stage)) {
+                const hasAcceptedProposal = proposals.some(p => p.status === 'Aceita');
+                if (!hasAcceptedProposal) {
+                    setValidationAlert({
+                        isOpen: true,
+                        title: "Ação Bloqueada",
+                        message: `Para mover a oportunidade para a fase "${stage}", é necessário que ela possua pelo menos uma proposta com status "Aceita".`
+                    });
+                    return;
+                }
+            }
+
             if (stage === 'Perdido') {
                 setIsLossModalOpen(true);
             } else {
@@ -829,6 +853,13 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                 account={associatedAccount}
                 onUpdate={handleUpdateAccountFromDetail}
                 onDelete={handleDeleteAccountFromDetail}
+            />
+
+            <AlertModal 
+                isOpen={validationAlert.isOpen}
+                onClose={() => setValidationAlert(prev => ({ ...prev, isOpen: false }))}
+                title={validationAlert.title}
+                message={validationAlert.message}
             />
         </>
     );

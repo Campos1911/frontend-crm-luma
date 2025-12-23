@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { KanbanBoard } from './KanbanBoard';
@@ -10,7 +11,8 @@ import { ColumnData, StatusColor, CardData } from '../types';
 import { OpportunityDetailModal } from './OpportunityDetailModal';
 import { LossReasonModal } from './LossReasonModal';
 import { OpportunityFormModal } from './OpportunityFormModal';
-import { getOpportunities, updateOpportunity, moveOpportunity, addOpportunity, deleteOpportunity } from '../dataStore';
+import { AlertModal } from './ui/AlertModal';
+import { getOpportunities, updateOpportunity, moveOpportunity, addOpportunity, deleteOpportunity, getProposalsByOpportunity } from '../dataStore';
 
 const getStatusForColumn = (columnTitle: string): { status: string; statusColor: StatusColor } => {
     switch (columnTitle) {
@@ -23,6 +25,8 @@ const getStatusForColumn = (columnTitle: string): { status: string; statusColor:
         default: return { status: 'Em Andamento', statusColor: 'blue' };
     }
 };
+
+const RESTRICTED_STAGES = ['Assinatura de Contrato', 'Aguardando Pagamento', 'Ganho'];
 
 const SalesFunnelPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -39,6 +43,13 @@ const SalesFunnelPage: React.FC = () => {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+
+    // Alert Modal State
+    const [validationAlert, setValidationAlert] = useState<{isOpen: boolean, title: string, message: string}>({
+        isOpen: false,
+        title: '',
+        message: ''
+    });
 
     // Loss Reason Modal State for Drag & Drop
     const [isLossModalOpen, setIsLossModalOpen] = useState(false);
@@ -107,11 +118,28 @@ const SalesFunnelPage: React.FC = () => {
     const handleCardMove = (cardId: string, sourceColId: string, destColId: string) => {
         const destCol = columns.find(c => c.id === destColId);
         
-        // Intercept move to "Perdido"
-        if (destCol && destCol.title === 'Perdido') {
-            setPendingMove({ cardId, sourceColId, destColId });
-            setIsLossModalOpen(true);
-            return;
+        if (destCol) {
+            // Check restriction: Must have an Accepted Proposal to move to restricted stages
+            if (RESTRICTED_STAGES.includes(destCol.title)) {
+                const proposals = getProposalsByOpportunity(cardId);
+                const hasAcceptedProposal = proposals.some(p => p.status === 'Aceita');
+
+                if (!hasAcceptedProposal) {
+                    setValidationAlert({
+                        isOpen: true,
+                        title: "Movimentação Bloqueada",
+                        message: `Para mover a oportunidade para "${destCol.title}", é necessário que ela possua pelo menos uma proposta com status "Aceita".`
+                    });
+                    return; // Cancel move
+                }
+            }
+
+            // Intercept move to "Perdido"
+            if (destCol.title === 'Perdido') {
+                setPendingMove({ cardId, sourceColId, destColId });
+                setIsLossModalOpen(true);
+                return;
+            }
         }
 
         executeCardMove(cardId, sourceColId, destColId);
@@ -155,6 +183,21 @@ const SalesFunnelPage: React.FC = () => {
         const destCol = columns.find(c => c.title === targetStageTitle);
         
         if (sourceColId && destCol) {
+            // Check restriction: Must have an Accepted Proposal to move to restricted stages
+            if (RESTRICTED_STAGES.includes(targetStageTitle)) {
+                const proposals = getProposalsByOpportunity(cardId);
+                const hasAcceptedProposal = proposals.some(p => p.status === 'Aceita');
+
+                if (!hasAcceptedProposal) {
+                    setValidationAlert({
+                        isOpen: true,
+                        title: "Movimentação Bloqueada",
+                        message: `Para mover a oportunidade para "${targetStageTitle}", é necessário que ela possua pelo menos uma proposta com status "Aceita".`
+                    });
+                    return;
+                }
+            }
+
             executeCardMove(cardId, sourceColId, destCol.id);
         }
     };
@@ -274,6 +317,13 @@ const SalesFunnelPage: React.FC = () => {
                     isOpen={isLossModalOpen} 
                     onClose={() => { setIsLossModalOpen(false); setPendingMove(null); }}
                     onConfirm={handleConfirmLossReason}
+                />
+
+                <AlertModal 
+                    isOpen={validationAlert.isOpen}
+                    onClose={() => setValidationAlert(prev => ({ ...prev, isOpen: false }))}
+                    title={validationAlert.title}
+                    message={validationAlert.message}
                 />
             </main>
         </div>
