@@ -8,6 +8,7 @@ import { ConfirmProposalStageModal } from './ConfirmProposalStageModal';
 import { ProductDetailModal, ProductResult } from './ProductDetailModal';
 import { ContactDetailModal } from './ContactDetailModal';
 import { OpportunityDetailModal } from './OpportunityDetailModal';
+import { AlertModal } from './ui/AlertModal';
 import { getOpportunityById, updateOpportunity, moveOpportunity, deleteOpportunity } from '../dataStore';
 import { INITIAL_CONTACTS_DATA } from '../constants';
 
@@ -128,6 +129,13 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
     // State for stage confirmation
     const [pendingStage, setPendingStage] = useState<string | null>(null);
 
+    // State for Alert Modal
+    const [validationAlert, setValidationAlert] = useState<{isOpen: boolean, title: string, message: string}>({
+        isOpen: false,
+        title: '',
+        message: ''
+    });
+
     // State for Product Modal
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
@@ -164,6 +172,7 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
             setIsContactModalOpen(false);
             setIsOpportunityModalOpen(false);
             setIsContactSearchOpen(false);
+            setValidationAlert({ isOpen: false, title: '', message: '' });
             
             const initContact = contactName || '';
             setCurrentContactName(initContact);
@@ -305,6 +314,31 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
     };
     
     const handleStageClick = (newStatus: string) => {
+        // Validation logic for "Aceita"
+        if (newStatus === 'Aceita') {
+            const requiredFields = [
+                { field: 'installments', label: 'Número de Parcelas' },
+                { field: 'expiryDate', label: 'Data de Validade' },
+                { field: 'paymentMethods', label: 'Formas de Pagamento' },
+                { field: 'contractPeriod', label: 'Período de Contratação' },
+                { field: 'description', label: 'Descrição' }
+            ];
+
+            const missingFields = requiredFields.filter(item => {
+                const value = formData[item.field as keyof PaymentInfo];
+                return !value || value.toString().trim() === '';
+            });
+
+            if (missingFields.length > 0) {
+                setValidationAlert({
+                    isOpen: true,
+                    title: 'Campos Obrigatórios',
+                    message: `Para alterar o status para "Aceita", é necessário preencher: ${missingFields.map(f => f.label).join(', ')}.`
+                });
+                return;
+            }
+        }
+
         if (newStatus !== proposal.status) {
             setPendingStage(newStatus);
         }
@@ -947,6 +981,13 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
                 isOpen={isProductModalOpen}
                 onClose={() => setIsProductModalOpen(false)}
                 onSave={handleSaveProduct}
+            />
+
+            <AlertModal
+                isOpen={validationAlert.isOpen}
+                onClose={() => setValidationAlert(prev => ({ ...prev, isOpen: false }))}
+                title={validationAlert.title}
+                message={validationAlert.message}
             />
 
             {/* Navigation Modals */}

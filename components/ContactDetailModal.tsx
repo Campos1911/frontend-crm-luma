@@ -279,6 +279,8 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
                 school: '',
                 financialGuardian: contact.name,
                 email: '',
+                gender: '',
+                schoolYear: '',
                 specificities: [],
                 guardians: []
             };

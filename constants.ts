@@ -345,6 +345,7 @@ export const INITIAL_STUDENTS_LIST: StudentPageData[] = [
         schoolYear: '2º Ano Fundamental I',
         school: 'Escola B C D',
         financialGuardian: 'João Silva',
+        email: 'mariana.silva@aluno.com',
         specificities: [],
         guardians: [
             { id: 'g1', name: 'João Silva', role: 'Pai', isFinancial: true, isPedagogical: true }
@@ -359,6 +360,7 @@ export const INITIAL_STUDENTS_LIST: StudentPageData[] = [
         schoolYear: '5º Ano Fundamental I',
         school: 'Colégio Futuro',
         financialGuardian: 'Ana Pereira',
+        email: 'lucas.pereira@aluno.com',
         specificities: ['TDAH'],
         guardians: [
             { id: 'g3', name: 'Ana Pereira', role: 'Mãe', isFinancial: true, isPedagogical: true }
@@ -373,6 +375,7 @@ export const INITIAL_STUDENTS_LIST: StudentPageData[] = [
         schoolYear: '3º Ano Fundamental I',
         school: 'Escola Internacional',
         financialGuardian: 'Ricardo Almeida',
+        email: 'sofia.almeida@aluno.com',
         specificities: ['Necessita óculos'],
         guardians: [
             { id: 'g4', name: 'Ricardo Almeida', role: 'Pai', isFinancial: true, isPedagogical: true }
@@ -387,6 +390,7 @@ export const INITIAL_STUDENTS_LIST: StudentPageData[] = [
         schoolYear: '4º Ano Fundamental I',
         school: 'Colégio Futuro',
         financialGuardian: 'Fernanda Costa',
+        email: 'gabriel.costa@aluno.com',
         specificities: [],
         guardians: [
             { id: 'g5', name: 'Fernanda Costa', role: 'Mãe', isFinancial: true, isPedagogical: true }
