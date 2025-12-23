@@ -1,501 +1,592 @@
-import { ColumnData, LeadColumnData, NavItem, ProposalColumnData, Contact, StudentPageData, Account, GlobalTask } from './types';
+import {
+  ColumnData,
+  LeadColumnData,
+  NavItem,
+  ProposalColumnData,
+  Contact,
+  StudentPageData,
+  Account,
+  GlobalTask,
+} from "./types";
 
 export const INITIAL_NAV_ITEMS: NavItem[] = [
-    { icon: 'filter_alt', text: 'Funil de Leads', path: '/leads-funnel' },
-    { icon: 'workspaces', text: 'Funil de Vendas', path: '/' },
-    { icon: 'description', text: 'Propostas', path: '/proposals' },
-    { icon: 'school', text: 'Alunos', path: '/students' },
-    { icon: 'person', text: 'Contatos', path: '/contacts' },
-    { icon: 'apartment', text: 'Contas', path: '/accounts' },
-    { icon: 'task_alt', text: 'Tarefas', path: '/tasks' },
+  { icon: "filter_alt", text: "Funil de Leads", path: "/leads-funnel" },
+  { icon: "workspaces", text: "Funil de Vendas", path: "/" },
+  { icon: "description", text: "Propostas", path: "/proposals" },
+  { icon: "school", text: "Alunos", path: "/students" },
+  { icon: "person", text: "Contatos", path: "/contacts" },
+  { icon: "apartment", text: "Contas", path: "/accounts" },
+  { icon: "task_alt", text: "Tarefas", path: "/tasks" },
 ];
 
 export const INITIAL_FUNNEL_DATA: ColumnData[] = [
-    {
-        id: 'col-1',
-        title: 'Nova Oportunidade',
-        cards: [
-            { 
-                id: 'c1', 
-                name: 'TechSolutions', 
-                amount: 'R$ 15.000,00', 
-                status: 'Proposta Enviada', 
-                statusColor: 'blue',
-                experimentalClasses: [
-                    { id: 'exp-1', date: '2024-11-20', time: '14:30', discipline: 'Matemática', studentName: 'Pedro Silva' }
-                ]
-            },
-            { id: 'c2', name: 'InovaWeb', amount: 'R$ 8.500,00', status: 'Aguardando Resposta', statusColor: 'orange' },
+  {
+    id: "col-1",
+    title: "Nova Oportunidade",
+    cards: [
+      {
+        id: "c1",
+        name: "TechSolutions",
+        amount: "R$ 15.000,00",
+        status: "Proposta Enviada",
+        statusColor: "blue",
+        experimentalClasses: [
+          {
+            id: "exp-1",
+            date: "2024-11-20",
+            time: "14:30",
+            discipline: "Matemática",
+            studentName: "Pedro Silva",
+          },
         ],
-    },
-    {
-        id: 'col-2',
-        title: 'Negociação',
-        cards: [
-            { 
-                id: 'c3', 
-                name: 'GlobalCorp', 
-                amount: 'R$ 22.000,00', 
-                status: 'Em Ajuste', 
-                statusColor: 'blue',
-                experimentalClasses: [
-                    { id: 'exp-2', date: '2024-11-22', time: '10:00', discipline: 'Física', studentName: 'Lucas Pereira' }
-                ]
-            },
-            { id: 'c4', name: 'Connecta', amount: 'R$ 12.300,00', status: 'Proposta Enviada', statusColor: 'blue' },
+      },
+      {
+        id: "c2",
+        name: "InovaWeb",
+        amount: "R$ 8.500,00",
+        status: "Aguardando Resposta",
+        statusColor: "orange",
+      },
+    ],
+  },
+  {
+    id: "col-2",
+    title: "Negociação",
+    cards: [
+      {
+        id: "c3",
+        name: "GlobalCorp",
+        amount: "R$ 22.000,00",
+        status: "Em Ajuste",
+        statusColor: "blue",
+        experimentalClasses: [
+          {
+            id: "exp-2",
+            date: "2024-11-22",
+            time: "10:00",
+            discipline: "Física",
+            studentName: "Lucas Pereira",
+          },
         ],
-    },
-    {
-        id: 'col-3',
-        title: 'Assinatura de Contrato',
-        cards: [
-            { id: 'c5', name: 'Future Systems', amount: 'R$ 35.000,00', status: 'Minuta Enviada', statusColor: 'purple' },
-        ],
-    },
-    {
-        id: 'col-4',
-        title: 'Aguardando Pagamento',
-        cards: [
-            { id: 'c6', name: 'MegaCorp', amount: 'R$ 50.000,00', status: 'Faturado', statusColor: 'yellow' },
-        ],
-    },
-    {
-        id: 'col-5',
-        title: 'Ganho',
-        cards: [
-            { id: 'c7', name: 'Vértice Digital', amount: 'R$ 18.000,00', status: 'Concluído', statusColor: 'green' },
-        ],
-    },
-    {
-        id: 'col-6',
-        title: 'Perdido',
-        cards: [
-            { id: 'c8', name: 'Alfa Soluções', amount: 'R$ 9.800,00', status: 'Sem Orçamento', statusColor: 'red' },
-        ],
-    },
+      },
+      {
+        id: "c4",
+        name: "Connecta",
+        amount: "R$ 12.300,00",
+        status: "Proposta Enviada",
+        statusColor: "blue",
+      },
+    ],
+  },
+  {
+    id: "col-3",
+    title: "Assinatura de Contrato",
+    cards: [
+      {
+        id: "c5",
+        name: "Future Systems",
+        amount: "R$ 35.000,00",
+        status: "Minuta Enviada",
+        statusColor: "purple",
+      },
+    ],
+  },
+  {
+    id: "col-4",
+    title: "Aguardando Pagamento",
+    cards: [
+      {
+        id: "c6",
+        name: "MegaCorp",
+        amount: "R$ 50.000,00",
+        status: "Faturado",
+        statusColor: "yellow",
+      },
+    ],
+  },
+  {
+    id: "col-5",
+    title: "Ganho",
+    cards: [
+      {
+        id: "c7",
+        name: "Vértice Digital",
+        amount: "R$ 18.000,00",
+        status: "Concluído",
+        statusColor: "green",
+      },
+    ],
+  },
+  {
+    id: "col-6",
+    title: "Perdido",
+    cards: [
+      {
+        id: "c8",
+        name: "Alfa Soluções",
+        amount: "R$ 9.800,00",
+        status: "Sem Orçamento",
+        statusColor: "red",
+      },
+    ],
+  },
 ];
 
 export const INITIAL_LEADS_DATA: LeadColumnData[] = [
-    {
-        id: 'l-col-1',
-        title: 'Novo Lead',
-        cards: [
-            { 
-                id: 'l1', 
-                name: 'Ana Costa', 
-                email: 'ana.costa@email.com', 
-                phone: '(11) 98765-4321', 
-                source: 'LinkedIn',
-                company: 'Tech Solutions Inc.',
-                priority: 'Alta',
-                medium: 'social',
-                campaign: 'q1-awareness',
-                term: 'software',
-                content: 'post-linkedin-01'
-            },
-            { 
-                id: 'l2', 
-                name: 'Bruno Alves', 
-                email: 'bruno.alves@email.com', 
-                phone: '(21) 91234-5678', 
-                source: 'Site',
-                company: 'InovaWeb',
-                priority: 'Média',
-                medium: 'organic',
-                campaign: 'website-visit'
-            },
-            { 
-                id: 'l3', 
-                name: 'Carla Dias', 
-                email: 'carla.dias@email.com', 
-                phone: '(31) 95555-4444', 
-                source: 'Indicação',
-                company: 'Freelancer',
-                priority: 'Baixa'
-            },
-        ],
-    },
-    {
-        id: 'l-col-2',
-        title: 'Atendimento',
-        cards: [
-            { 
-                id: 'l4', 
-                name: 'Daniel Martins', 
-                email: 'daniel.m@email.com', 
-                phone: '(41) 98877-6655', 
-                source: 'Site',
-                company: 'Martins & Co.',
-                priority: 'Alta'
-            },
-            { 
-                id: 'l5', 
-                name: 'Eduarda Faria', 
-                email: 'eduarda.f@email.com', 
-                phone: '(51) 99999-1111', 
-                source: 'Evento',
-                company: 'Eventos Plus',
-                priority: 'Média'
-            },
-        ],
-    },
-    {
-        id: 'l-col-3',
-        title: 'FUP',
-        cards: [
-            { 
-                id: 'l6', 
-                name: 'Fábio Lima', 
-                email: 'fabio.l@email.com', 
-                phone: '(61) 98888-2222', 
-                source: 'LinkedIn',
-                company: 'Lima Logística',
-                priority: 'Alta'
-            },
-        ],
-    },
-    {
-        id: 'l-col-4',
-        title: 'Pré-qualificado',
-        cards: [
-            { 
-                id: 'l7', 
-                name: 'Gabriela Pereira', 
-                email: 'gabi.p@email.com', 
-                phone: '(71) 91111-3333', 
-                source: 'Site',
-                company: 'StartUp One',
-                priority: 'Média'
-            },
-        ],
-    },
-    {
-        id: 'l-col-5',
-        title: 'Qualificado',
-        cards: [],
-    },
-    {
-        id: 'l-col-6',
-        title: 'Desqualificado',
-        cards: [
-            { 
-                id: 'l8', 
-                name: 'Hugo Nunes', 
-                email: 'hugo.nunes@email.com', 
-                phone: '(81) 94444-5555', 
-                source: 'Indicação',
-                company: 'Nunes Retail',
-                priority: 'Baixa',
-                note: 'Orçamento abaixo do esperado.'
-            },
-        ],
-    },
+  {
+    id: "l-col-1",
+    title: "Novo Lead",
+    cards: [],
+  },
+  {
+    id: "l-col-2",
+    title: "Atendimento",
+    cards: [],
+  },
+  {
+    id: "l-col-3",
+    title: "FUP",
+    cards: [],
+  },
+  {
+    id: "l-col-4",
+    title: "Pré-qualificado",
+    cards: [],
+  },
+  {
+    id: "l-col-5",
+    title: "Qualificado",
+    cards: [],
+  },
+  {
+    id: "l-col-6",
+    title: "Desqualificado",
+    cards: [],
+  },
 ];
 
 export const INITIAL_PROPOSALS_KANBAN_DATA: ProposalColumnData[] = [
-    {
-        id: 'prop-col-1',
-        title: 'Rascunho',
-        cards: [
-            { id: 'p3', opportunityId: 'c3', title: 'Add-on Services', displayId: 'PROP-1205', status: 'Rascunho', value: 'R$ 5.000,00', date: '5 Nov, 2024', opportunityName: 'Projeto Inovação', contactName: 'GlobalCorp' },
-            { id: 'p6', opportunityId: 'c8', title: 'Consultoria Q4', displayId: 'PROP-1209', status: 'Rascunho', value: 'R$ 12.000,00', date: '6 Nov, 2024', opportunityName: 'Consultoria Estratégica', contactName: 'Alpha Biz' },
-        ]
-    },
-    {
-        id: 'prop-col-2',
-        title: 'Enviada',
-        cards: [
-             { id: 'p7', opportunityId: 'c6', title: 'Licenciamento Anual', displayId: 'PROP-1210', status: 'Enviada', value: 'R$ 45.000,00', date: '4 Nov, 2024', opportunityName: 'Licenças 2025', contactName: 'MegaCorp' },
-        ]
-    },
-    {
-        id: 'prop-col-3',
-        title: 'Revisão',
-        cards: [
-             { id: 'p8', opportunityId: 'c1', title: 'Implantação ERP', displayId: 'PROP-1190', status: 'Revisão', value: 'R$ 80.000,00', date: '20 Out, 2024', opportunityName: 'Migração de Sistema', contactName: 'TechSolutions' },
-        ]
-    },
-    {
-        id: 'prop-col-4',
-        title: 'Aceita',
-        cards: [
-            { id: 'p1', opportunityId: 'c1', title: 'Q4 Enterprise Solution', displayId: 'PROP-1203', status: 'Aceita', value: 'R$ 25.000,00', date: '1 Nov, 2024', opportunityName: 'Plano de Aula #OP12345', contactName: 'Escola B C D' },
-        ]
-    },
-    {
-        id: 'prop-col-5',
-        title: 'Rejeitada',
-        cards: []
-    },
-    {
-        id: 'prop-col-6',
-        title: 'Cancelada',
-        cards: [
-            { id: 'p9', opportunityId: 'c7', title: 'Treinamento Equipe', displayId: 'PROP-1150', status: 'Cancelada', value: 'R$ 3.500,00', date: '10 Set, 2024', opportunityName: 'Treinamento', contactName: 'Vértice Digital' },
-        ]
-    },
+  {
+    id: "prop-col-1",
+    title: "Rascunho",
+    cards: [
+      {
+        id: "p3",
+        opportunityId: "c3",
+        title: "Add-on Services",
+        displayId: "PROP-1205",
+        status: "Rascunho",
+        value: "R$ 5.000,00",
+        date: "5 Nov, 2024",
+        opportunityName: "Projeto Inovação",
+        contactName: "GlobalCorp",
+      },
+      {
+        id: "p6",
+        opportunityId: "c8",
+        title: "Consultoria Q4",
+        displayId: "PROP-1209",
+        status: "Rascunho",
+        value: "R$ 12.000,00",
+        date: "6 Nov, 2024",
+        opportunityName: "Consultoria Estratégica",
+        contactName: "Alpha Biz",
+      },
+    ],
+  },
+  {
+    id: "prop-col-2",
+    title: "Enviada",
+    cards: [
+      {
+        id: "p7",
+        opportunityId: "c6",
+        title: "Licenciamento Anual",
+        displayId: "PROP-1210",
+        status: "Enviada",
+        value: "R$ 45.000,00",
+        date: "4 Nov, 2024",
+        opportunityName: "Licenças 2025",
+        contactName: "MegaCorp",
+      },
+    ],
+  },
+  {
+    id: "prop-col-3",
+    title: "Revisão",
+    cards: [
+      {
+        id: "p8",
+        opportunityId: "c1",
+        title: "Implantação ERP",
+        displayId: "PROP-1190",
+        status: "Revisão",
+        value: "R$ 80.000,00",
+        date: "20 Out, 2024",
+        opportunityName: "Migração de Sistema",
+        contactName: "TechSolutions",
+      },
+    ],
+  },
+  {
+    id: "prop-col-4",
+    title: "Aceita",
+    cards: [
+      {
+        id: "p1",
+        opportunityId: "c1",
+        title: "Q4 Enterprise Solution",
+        displayId: "PROP-1203",
+        status: "Aceita",
+        value: "R$ 25.000,00",
+        date: "1 Nov, 2024",
+        opportunityName: "Plano de Aula #OP12345",
+        contactName: "Escola B C D",
+      },
+    ],
+  },
+  {
+    id: "prop-col-5",
+    title: "Rejeitada",
+    cards: [],
+  },
+  {
+    id: "prop-col-6",
+    title: "Cancelada",
+    cards: [
+      {
+        id: "p9",
+        opportunityId: "c7",
+        title: "Treinamento Equipe",
+        displayId: "PROP-1150",
+        status: "Cancelada",
+        value: "R$ 3.500,00",
+        date: "10 Set, 2024",
+        opportunityName: "Treinamento",
+        contactName: "Vértice Digital",
+      },
+    ],
+  },
 ];
 
 export const INITIAL_CONTACTS_DATA: Contact[] = [
-    { 
-        id: 'ct1', 
-        name: 'João Silva', 
-        account: 'TechSolutions', 
-        phone: '(11) 98888-7777', 
-        email: 'joao.silva@techsolutions.com', 
-        cpf: '123.456.789-00', 
-        country: 'Brasil',
-        dateOfBirth: '1985-05-15',
-        address: {
-            street: 'Av. Paulista',
-            number: '1000',
-            city: 'São Paulo',
-            state: 'SP',
-            postalCode: '01310-100',
-            country: 'Brasil'
-        },
-        students: [
-            { id: 's1', name: 'Pedro Silva', role: 'Aluno', financial: true, pedagogical: true },
-            { id: 's2', name: 'Mariana Silva', role: 'Aluno', financial: false, pedagogical: true }
-        ]
+  {
+    id: "ct1",
+    name: "João Silva",
+    account: "TechSolutions",
+    phone: "(11) 98888-7777",
+    email: "joao.silva@techsolutions.com",
+    cpf: "123.456.789-00",
+    country: "Brasil",
+    dateOfBirth: "1985-05-15",
+    address: {
+      street: "Av. Paulista",
+      number: "1000",
+      city: "São Paulo",
+      state: "SP",
+      postalCode: "01310-100",
+      country: "Brasil",
     },
-    { 
-        id: 'ct2', 
-        name: 'Maria Souza', 
-        account: 'InovaWeb', 
-        phone: '(21) 97777-6666', 
-        email: 'maria.souza@inovaweb.com.br', 
-        cpf: '234.567.890-11', 
-        country: 'Brasil',
-        dateOfBirth: '1990-08-22',
-         address: {
-            street: 'Rua das Flores',
-            number: '200',
-            city: 'Rio de Janeiro',
-            state: 'RJ',
-            postalCode: '20000-000',
-            country: 'Brasil'
-        },
-        students: []
+    students: [
+      {
+        id: "s1",
+        name: "Pedro Silva",
+        role: "Aluno",
+        financial: true,
+        pedagogical: true,
+      },
+      {
+        id: "s2",
+        name: "Mariana Silva",
+        role: "Aluno",
+        financial: false,
+        pedagogical: true,
+      },
+    ],
+  },
+  {
+    id: "ct2",
+    name: "Maria Souza",
+    account: "InovaWeb",
+    phone: "(21) 97777-6666",
+    email: "maria.souza@inovaweb.com.br",
+    cpf: "234.567.890-11",
+    country: "Brasil",
+    dateOfBirth: "1990-08-22",
+    address: {
+      street: "Rua das Flores",
+      number: "200",
+      city: "Rio de Janeiro",
+      state: "RJ",
+      postalCode: "20000-000",
+      country: "Brasil",
     },
-    { 
-        id: 'ct3', 
-        name: 'John Doe', 
-        account: 'GlobalCorp', 
-        phone: '+1 555 123 4567', 
-        email: 'j.doe@globalcorp.com', 
-        cpf: '-', 
-        country: 'EUA',
-        address: {
-            street: 'Market St',
-            number: '123',
-            city: 'San Francisco',
-            state: 'CA',
-            postalCode: '94103',
-            country: 'USA'
-        }
+    students: [],
+  },
+  {
+    id: "ct3",
+    name: "John Doe",
+    account: "GlobalCorp",
+    phone: "+1 555 123 4567",
+    email: "j.doe@globalcorp.com",
+    cpf: "-",
+    country: "EUA",
+    address: {
+      street: "Market St",
+      number: "123",
+      city: "San Francisco",
+      state: "CA",
+      postalCode: "94103",
+      country: "USA",
     },
-    { 
-        id: 'ct4', 
-        name: 'Ana Pereira', 
-        account: 'Connecta', 
-        phone: '(31) 96666-5555', 
-        email: 'ana.pereira@connecta.com', 
-        cpf: '345.678.901-22', 
-        country: 'Brasil',
-        dateOfBirth: '1988-11-30',
-         students: [
-            { id: 's3', name: 'Lucas Pereira', role: 'Aluno', financial: true, pedagogical: true }
-        ]
-    },
-    { 
-        id: 'ct5', 
-        name: 'Carlos Mendes', 
-        account: 'MegaCorp', 
-        phone: '(41) 95555-4444', 
-        email: 'carlos.mendes@megacorp.com.br', 
-        cpf: '456.789.012-33', 
-        country: 'Brasil' 
-    },
+  },
+  {
+    id: "ct4",
+    name: "Ana Pereira",
+    account: "Connecta",
+    phone: "(31) 96666-5555",
+    email: "ana.pereira@connecta.com",
+    cpf: "345.678.901-22",
+    country: "Brasil",
+    dateOfBirth: "1988-11-30",
+    students: [
+      {
+        id: "s3",
+        name: "Lucas Pereira",
+        role: "Aluno",
+        financial: true,
+        pedagogical: true,
+      },
+    ],
+  },
+  {
+    id: "ct5",
+    name: "Carlos Mendes",
+    account: "MegaCorp",
+    phone: "(41) 95555-4444",
+    email: "carlos.mendes@megacorp.com.br",
+    cpf: "456.789.012-33",
+    country: "Brasil",
+  },
 ];
 
 export const INITIAL_STUDENTS_LIST: StudentPageData[] = [
-    {
-        id: 'st1',
-        firstName: 'Pedro',
-        lastName: 'Silva',
-        dateOfBirth: '2015-03-10',
-        gender: 'Masculino',
-        schoolYear: '4º Ano Fundamental I',
-        school: 'Escola B C D',
-        financialGuardian: 'João Silva',
-        email: 'pedro.silva@aluno.com',
-        specificities: ['Alergia a lactose'],
-        guardians: [
-            { id: 'g1', name: 'João Silva', role: 'Pai', isFinancial: true, isPedagogical: true },
-            { id: 'g2', name: 'Maria Silva', role: 'Mãe', isFinancial: false, isPedagogical: true }
-        ]
-    },
-    {
-        id: 'st2',
-        firstName: 'Mariana',
-        lastName: 'Silva',
-        dateOfBirth: '2017-07-22',
-        gender: 'Feminino',
-        schoolYear: '2º Ano Fundamental I',
-        school: 'Escola B C D',
-        financialGuardian: 'João Silva',
-        specificities: [],
-        guardians: [
-            { id: 'g1', name: 'João Silva', role: 'Pai', isFinancial: true, isPedagogical: true }
-        ]
-    },
-    {
-        id: 'st3',
-        firstName: 'Lucas',
-        lastName: 'Pereira',
-        dateOfBirth: '2014-11-05',
-        gender: 'Masculino',
-        schoolYear: '5º Ano Fundamental I',
-        school: 'Colégio Futuro',
-        financialGuardian: 'Ana Pereira',
-        specificities: ['TDAH'],
-        guardians: [
-            { id: 'g3', name: 'Ana Pereira', role: 'Mãe', isFinancial: true, isPedagogical: true }
-        ]
-    },
-    {
-        id: 'st4',
-        firstName: 'Sofia',
-        lastName: 'Almeida',
-        dateOfBirth: '2016-01-30',
-        gender: 'Feminino',
-        schoolYear: '3º Ano Fundamental I',
-        school: 'Escola Internacional',
-        financialGuardian: 'Ricardo Almeida',
-        specificities: ['Necessita óculos'],
-        guardians: [
-            { id: 'g4', name: 'Ricardo Almeida', role: 'Pai', isFinancial: true, isPedagogical: true }
-        ]
-    },
-    {
-        id: 'st5',
-        firstName: 'Gabriel',
-        lastName: 'Costa',
-        dateOfBirth: '2015-09-12',
-        gender: 'Masculino',
-        schoolYear: '4º Ano Fundamental I',
-        school: 'Colégio Futuro',
-        financialGuardian: 'Fernanda Costa',
-        specificities: [],
-        guardians: [
-            { id: 'g5', name: 'Fernanda Costa', role: 'Mãe', isFinancial: true, isPedagogical: true }
-        ]
-    }
+  {
+    id: "st1",
+    firstName: "Pedro",
+    lastName: "Silva",
+    dateOfBirth: "2015-03-10",
+    gender: "Masculino",
+    schoolYear: "4º Ano Fundamental I",
+    school: "Escola B C D",
+    financialGuardian: "João Silva",
+    email: "pedro.silva@aluno.com",
+    specificities: ["Alergia a lactose"],
+    guardians: [
+      {
+        id: "g1",
+        name: "João Silva",
+        role: "Pai",
+        isFinancial: true,
+        isPedagogical: true,
+      },
+      {
+        id: "g2",
+        name: "Maria Silva",
+        role: "Mãe",
+        isFinancial: false,
+        isPedagogical: true,
+      },
+    ],
+  },
+  {
+    id: "st2",
+    firstName: "Mariana",
+    lastName: "Silva",
+    dateOfBirth: "2017-07-22",
+    gender: "Feminino",
+    schoolYear: "2º Ano Fundamental I",
+    school: "Escola B C D",
+    financialGuardian: "João Silva",
+    specificities: [],
+    guardians: [
+      {
+        id: "g1",
+        name: "João Silva",
+        role: "Pai",
+        isFinancial: true,
+        isPedagogical: true,
+      },
+    ],
+  },
+  {
+    id: "st3",
+    firstName: "Lucas",
+    lastName: "Pereira",
+    dateOfBirth: "2014-11-05",
+    gender: "Masculino",
+    schoolYear: "5º Ano Fundamental I",
+    school: "Colégio Futuro",
+    financialGuardian: "Ana Pereira",
+    specificities: ["TDAH"],
+    guardians: [
+      {
+        id: "g3",
+        name: "Ana Pereira",
+        role: "Mãe",
+        isFinancial: true,
+        isPedagogical: true,
+      },
+    ],
+  },
+  {
+    id: "st4",
+    firstName: "Sofia",
+    lastName: "Almeida",
+    dateOfBirth: "2016-01-30",
+    gender: "Feminino",
+    schoolYear: "3º Ano Fundamental I",
+    school: "Escola Internacional",
+    financialGuardian: "Ricardo Almeida",
+    specificities: ["Necessita óculos"],
+    guardians: [
+      {
+        id: "g4",
+        name: "Ricardo Almeida",
+        role: "Pai",
+        isFinancial: true,
+        isPedagogical: true,
+      },
+    ],
+  },
+  {
+    id: "st5",
+    firstName: "Gabriel",
+    lastName: "Costa",
+    dateOfBirth: "2015-09-12",
+    gender: "Masculino",
+    schoolYear: "4º Ano Fundamental I",
+    school: "Colégio Futuro",
+    financialGuardian: "Fernanda Costa",
+    specificities: [],
+    guardians: [
+      {
+        id: "g5",
+        name: "Fernanda Costa",
+        role: "Mãe",
+        isFinancial: true,
+        isPedagogical: true,
+      },
+    ],
+  },
 ];
 
 export const INITIAL_ACCOUNTS_DATA: Account[] = [
-    { 
-        id: 'acc1', 
-        name: 'TechSolutions', 
-        type: 'Jurídica', 
-        phone: '(11) 3000-1000', 
-        email: 'contato@techsolutions.com', 
-        mainContact: 'João Silva',
-        manager: 'John Appleseed',
-        owner: 'Jane Smith',
-        cpfCnpj: '12.345.678/0001-90'
-    },
-    { 
-        id: 'acc2', 
-        name: 'InovaWeb', 
-        type: 'Jurídica', 
-        phone: '(21) 3000-2000', 
-        email: 'contato@inovaweb.com.br', 
-        mainContact: 'Maria Souza',
-        manager: 'Carlos Silva',
-        owner: 'Ana Brown',
-        cpfCnpj: '98.765.432/0001-10'
-    },
-    { 
-        id: 'acc3', 
-        name: 'Prefeitura de SP', 
-        type: 'Governo', 
-        phone: '(11) 156', 
-        email: 'contato@prefeitura.sp.gov.br', 
-        mainContact: 'Secretário X',
-        manager: 'Gov Relations',
-        owner: 'Director Y',
-        cpfCnpj: '00.000.000/0000-00'
-    },
-    { 
-        id: 'acc4', 
-        name: 'Consultoria Individual', 
-        type: 'Física', 
-        phone: '(31) 99999-0000', 
-        email: 'consultor@email.com', 
-        mainContact: 'Carlos Santos',
-        manager: 'Account Mgr A',
-        owner: 'Sales Rep B',
-        cpfCnpj: '111.222.333-44'
-    },
-    { 
-        id: 'acc5', 
-        name: 'GlobalCorp', 
-        type: 'Jurídica', 
-        phone: '+1 555 000 1111', 
-        email: 'info@globalcorp.com', 
-        mainContact: 'John Doe',
-        manager: 'Michael Scott',
-        owner: 'Jim Halpert',
-        cpfCnpj: '55.444.333/0001-22'
-    },
+  {
+    id: "acc1",
+    name: "TechSolutions",
+    type: "Jurídica",
+    phone: "(11) 3000-1000",
+    email: "contato@techsolutions.com",
+    mainContact: "João Silva",
+    manager: "John Appleseed",
+    owner: "Jane Smith",
+    cpfCnpj: "12.345.678/0001-90",
+  },
+  {
+    id: "acc2",
+    name: "InovaWeb",
+    type: "Jurídica",
+    phone: "(21) 3000-2000",
+    email: "contato@inovaweb.com.br",
+    mainContact: "Maria Souza",
+    manager: "Carlos Silva",
+    owner: "Ana Brown",
+    cpfCnpj: "98.765.432/0001-10",
+  },
+  {
+    id: "acc3",
+    name: "Prefeitura de SP",
+    type: "Governo",
+    phone: "(11) 156",
+    email: "contato@prefeitura.sp.gov.br",
+    mainContact: "Secretário X",
+    manager: "Gov Relations",
+    owner: "Director Y",
+    cpfCnpj: "00.000.000/0000-00",
+  },
+  {
+    id: "acc4",
+    name: "Consultoria Individual",
+    type: "Física",
+    phone: "(31) 99999-0000",
+    email: "consultor@email.com",
+    mainContact: "Carlos Santos",
+    manager: "Account Mgr A",
+    owner: "Sales Rep B",
+    cpfCnpj: "111.222.333-44",
+  },
+  {
+    id: "acc5",
+    name: "GlobalCorp",
+    type: "Jurídica",
+    phone: "+1 555 000 1111",
+    email: "info@globalcorp.com",
+    mainContact: "John Doe",
+    manager: "Michael Scott",
+    owner: "Jim Halpert",
+    cpfCnpj: "55.444.333/0001-22",
+  },
 ];
 
 export const INITIAL_TASKS_DATA: GlobalTask[] = [
-    {
-        id: 'gt1',
-        title: 'Enviar proposta comercial atualizada',
-        dueDate: '2024-11-20',
-        isCompleted: false,
-        assignee: 'Você',
-        relatedObjectType: 'oportunidade',
-        relatedObjectName: 'TechSolutions',
-        createdAt: '2024-11-15',
-        description: 'Verificar se os valores da nova tabela de preços foram aplicados corretamente antes do envio.'
-    },
-    {
-        id: 'gt2',
-        title: 'Ligar para confirmar reunião de onboarding',
-        dueDate: '2024-11-18',
-        isCompleted: true,
-        assignee: 'Carlos Silva',
-        relatedObjectType: 'contato',
-        relatedObjectName: 'João Silva',
-        createdAt: '2024-11-10',
-        completedAt: '2024-11-17',
-        description: 'Ligar no período da tarde, pois o cliente costuma estar em reuniões pela manhã.'
-    },
-    {
-        id: 'gt3',
-        title: 'Qualificar lead vindo do LinkedIn',
-        dueDate: '2024-11-25',
-        isCompleted: false,
-        assignee: 'Você',
-        relatedObjectType: 'lead',
-        relatedObjectName: 'Ana Costa',
-        createdAt: '2024-11-16',
-        description: 'Analisar o perfil da empresa e verificar se possuem fit com nossa solução de ERP para RH.'
-    },
-    {
-        id: 'gt4',
-        title: 'Revisar documentos fiscais da prefeitura',
-        dueDate: '2024-12-01',
-        isCompleted: false,
-        assignee: 'Jurídico',
-        relatedObjectType: 'conta',
-        relatedObjectName: 'Prefeitura de SP',
-        createdAt: '2024-11-12',
-        description: 'Necessário validar as certidões negativas de débito para o novo contrato.'
-    }
+  {
+    id: "gt1",
+    title: "Enviar proposta comercial atualizada",
+    dueDate: "2024-11-20",
+    isCompleted: false,
+    assignee: "Você",
+    relatedObjectType: "oportunidade",
+    relatedObjectName: "TechSolutions",
+    createdAt: "2024-11-15",
+    description:
+      "Verificar se os valores da nova tabela de preços foram aplicados corretamente antes do envio.",
+  },
+  {
+    id: "gt2",
+    title: "Ligar para confirmar reunião de onboarding",
+    dueDate: "2024-11-18",
+    isCompleted: true,
+    assignee: "Carlos Silva",
+    relatedObjectType: "contato",
+    relatedObjectName: "João Silva",
+    createdAt: "2024-11-10",
+    completedAt: "2024-11-17",
+    description:
+      "Ligar no período da tarde, pois o cliente costuma estar em reuniões pela manhã.",
+  },
+  {
+    id: "gt3",
+    title: "Qualificar lead vindo do LinkedIn",
+    dueDate: "2024-11-25",
+    isCompleted: false,
+    assignee: "Você",
+    relatedObjectType: "lead",
+    relatedObjectName: "Ana Costa",
+    createdAt: "2024-11-16",
+    description:
+      "Analisar o perfil da empresa e verificar se possuem fit com nossa solução de ERP para RH.",
+  },
+  {
+    id: "gt4",
+    title: "Revisar documentos fiscais da prefeitura",
+    dueDate: "2024-12-01",
+    isCompleted: false,
+    assignee: "Jurídico",
+    relatedObjectType: "conta",
+    relatedObjectName: "Prefeitura de SP",
+    createdAt: "2024-11-12",
+    description:
+      "Necessário validar as certidões negativas de débito para o novo contrato.",
+  },
 ];
