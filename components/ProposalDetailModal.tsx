@@ -337,6 +337,16 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
                 });
                 return;
             }
+
+            // Validar lista de produtos
+            if (!products || products.length === 0) {
+                setValidationAlert({
+                    isOpen: true,
+                    title: 'Produtos Necessários',
+                    message: 'Para alterar o status para "Aceita", a proposta deve conter pelo menos um produto.'
+                });
+                return;
+            }
         }
 
         if (newStatus !== proposal.status) {
