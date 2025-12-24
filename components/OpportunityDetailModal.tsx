@@ -9,7 +9,7 @@ import { LossReasonModal } from './LossReasonModal';
 import { ProposalDetailModal } from './ProposalDetailModal';
 import { AccountDetailModal } from './AccountDetailModal';
 import { AlertModal } from './ui/AlertModal';
-import { getProposalsByOpportunity, updateProposal, addProposal, getAccounts, updateAccount, deleteAccount } from '../dataStore';
+import { getProposalsByOpportunity, updateProposal, addProposal, getAccounts, updateAccount, deleteAccount, getContacts } from '../dataStore';
 import { INITIAL_STUDENTS_LIST } from '../constants';
 
 interface OpportunityDetailModalProps {
@@ -232,12 +232,31 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
     }, []);
 
     const availableAccounts = useMemo(() => getAccounts(), [isOpen]);
+    const availableContacts = useMemo(() => getContacts(), [isOpen]);
 
     const associatedAccount = useMemo(() => {
         if (!formData) return null;
         // Search based on the current form name to reflect changes in edit mode immediately in the UI if needed
         return availableAccounts.find(a => a.name === formData.name) || null;
     }, [formData, availableAccounts]);
+
+    const associatedMainContact = useMemo(() => {
+        if (!associatedAccount?.mainContact) return null;
+        return availableContacts.find(c => c.name === associatedAccount.mainContact);
+    }, [associatedAccount, availableContacts]);
+
+    const contactValidation = useMemo(() => {
+        if (!associatedMainContact) return { valid: false, missing: ['Contato Principal não encontrado'] };
+        const missing = [];
+        const names = associatedMainContact.name.trim().split(/\s+/);
+        if (names.length < 1 || !names[0]) missing.push('Nome');
+        if (names.length < 2 || !names[1]) missing.push('Sobrenome');
+        if (!associatedMainContact.cpf) missing.push('CPF');
+        if (!associatedMainContact.phone) missing.push('Telefone');
+        if (!associatedMainContact.email) missing.push('Email');
+        
+        return { valid: missing.length === 0, missing };
+    }, [associatedMainContact]);
 
     const filteredStudents = useMemo(() => {
         const term = studentSearch.toLowerCase();
@@ -703,6 +722,16 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                                                             <Icon name="edit" /> Editar Conta
                                                         </button>
                                                     )}
+                                                </div>
+                                            ) : !contactValidation.valid ? (
+                                                <div className="flex flex-col items-center justify-center p-12 bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/30 rounded-xl text-center animate-scale-in">
+                                                    <div className="size-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 mb-4">
+                                                        <Icon name="person_alert" className="text-3xl" />
+                                                    </div>
+                                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Dados do Contato Incompletos</h3>
+                                                    <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm mb-6">
+                                                        Para agendar aulas experimentais, o contato principal ({associatedAccount?.mainContact || 'Desconhecido'}) precisa ter os seguintes campos preenchidos: <strong>{contactValidation.missing.join(', ')}</strong>.
+                                                    </p>
                                                 </div>
                                             ) : (
                                                 <>
