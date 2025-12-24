@@ -8,7 +8,8 @@ import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import { LossReasonModal } from './LossReasonModal';
 import { ProposalDetailModal } from './ProposalDetailModal';
 import { AccountDetailModal } from './AccountDetailModal';
-import { getProposalsByOpportunity, updateProposal, addProposal, getAccounts, updateAccount, deleteAccount } from '../dataStore';
+import { AlertModal } from './ui/AlertModal';
+import { getProposalsByOpportunity, updateProposal, addProposal, getAccounts, updateAccount, deleteAccount, getContacts } from '../dataStore';
 import { INITIAL_STUDENTS_LIST } from '../constants';
 
 interface OpportunityDetailModalProps {
@@ -77,6 +78,8 @@ const STAGES = [
     'Perdido'
 ];
 
+const RESTRICTED_STAGES = ['Assinatura de Contrato', 'Aguardando Pagamento', 'Ganho'];
+
 const DISCIPLINES = [
     'Matemática',
     'Português',
@@ -85,6 +88,14 @@ const DISCIPLINES = [
     'Biologia',
     'História',
     'Geografia'
+];
+
+const FINANCIAL_STATUS_OPTIONS = [
+    'Pendente',
+    'Faturado',
+    'Pago',
+    'Atrasado',
+    'Cancelado'
 ];
 
 const TimelineItem: React.FC<{ icon: string; title: string; desc: string; date: string; iconClass?: string }> = ({ icon, title, desc, date, iconClass }) => (
@@ -122,6 +133,13 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isLossModalOpen, setIsLossModalOpen] = useState(false);
     const [formData, setFormData] = useState<CardData | null>(null);
+
+    // Alert Modal State
+    const [validationAlert, setValidationAlert] = useState<{isOpen: boolean, title: string, message: string}>({
+        isOpen: false,
+        title: '',
+        message: ''
+    });
 
     // Account Modal State
     const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
@@ -168,7 +186,8 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                 type: opportunity.type || 'Novo negócio',
                 closeDate: opportunity.closeDate || '2024-12-15',
                 lossReason: opportunity.lossReason || '',
-                experimentalClasses: opportunity.experimentalClasses || []
+                experimentalClasses: opportunity.experimentalClasses || [],
+                financialStatus: opportunity.financialStatus || 'Pendente'
             });
             
             const loadedProposals = getProposalsByOpportunity(opportunity.id);
@@ -194,6 +213,7 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
             setIsSchedulingClass(false);
             setEditingClassId(null);
             setIsAccountDropdownOpen(false);
+            setValidationAlert({ isOpen: false, title: '', message: '' });
         }
     }, [isOpen]);
 
@@ -212,12 +232,31 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
     }, []);
 
     const availableAccounts = useMemo(() => getAccounts(), [isOpen]);
+    const availableContacts = useMemo(() => getContacts(), [isOpen]);
 
     const associatedAccount = useMemo(() => {
         if (!formData) return null;
         // Search based on the current form name to reflect changes in edit mode immediately in the UI if needed
         return availableAccounts.find(a => a.name === formData.name) || null;
     }, [formData, availableAccounts]);
+
+    const associatedMainContact = useMemo(() => {
+        if (!associatedAccount?.mainContact) return null;
+        return availableContacts.find(c => c.name === associatedAccount.mainContact);
+    }, [associatedAccount, availableContacts]);
+
+    const contactValidation = useMemo(() => {
+        if (!associatedMainContact) return { valid: false, missing: ['Contato Principal não encontrado'] };
+        const missing = [];
+        const names = associatedMainContact.name.trim().split(/\s+/);
+        if (names.length < 1 || !names[0]) missing.push('Nome');
+        if (names.length < 2 || !names[1]) missing.push('Sobrenome');
+        if (!associatedMainContact.cpf) missing.push('CPF');
+        if (!associatedMainContact.phone) missing.push('Telefone');
+        if (!associatedMainContact.email) missing.push('Email');
+        
+        return { valid: missing.length === 0, missing };
+    }, [associatedMainContact]);
 
     const filteredStudents = useMemo(() => {
         const term = studentSearch.toLowerCase();
@@ -237,6 +276,19 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
 
     const handleStageClick = (stage: string) => {
         if (stage !== currentStage) {
+            // Check restrictions
+            if (RESTRICTED_STAGES.includes(stage)) {
+                const hasAcceptedProposal = proposals.some(p => p.status === 'Aceita');
+                if (!hasAcceptedProposal) {
+                    setValidationAlert({
+                        isOpen: true,
+                        title: "Ação Bloqueada",
+                        message: `Para mover a oportunidade para a fase "${stage}", é necessário que ela possua pelo menos uma proposta com status "Aceita".`
+                    });
+                    return;
+                }
+            }
+
             if (stage === 'Perdido') {
                 setIsLossModalOpen(true);
             } else {
@@ -295,7 +347,8 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                 type: opportunity.type || 'Novo negócio',
                 closeDate: opportunity.closeDate || '2024-12-15',
                 lossReason: opportunity.lossReason || '',
-                experimentalClasses: opportunity.experimentalClasses || []
+                experimentalClasses: opportunity.experimentalClasses || [],
+                financialStatus: opportunity.financialStatus || 'Pendente'
             });
             setExperimentalClasses(opportunity.experimentalClasses || []);
         }
@@ -607,6 +660,32 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                                                 {isEditing ? (<select name="type" value={formData.type} onChange={handleInputChange} className="w-full rounded-md border-neutral-200 dark:border-gray-700 bg-neutral-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-primary focus:border-primary p-2"><option value="Novo negócio">Novo negócio</option><option value="Recompra">Recompra</option><option value="Reativação">Reativação</option></select>) : (<p className="text-sm font-medium leading-normal text-gray-900 dark:text-white">{formData.type}</p>)}
                                             </div>
                                             <div className="flex flex-col gap-1 border-t border-solid border-gray-200 dark:border-gray-700 py-4"><p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Valor</p><p className="text-sm font-medium leading-normal text-gray-900 dark:text-white">{opportunity.amount}</p></div>
+                                            
+                                            {/* Financial Status Field */}
+                                            <div className="flex flex-col gap-1 border-t border-solid border-gray-200 dark:border-gray-700 py-4">
+                                                <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Status Financeiro</p>
+                                                {isEditing ? (
+                                                    <select 
+                                                        name="financialStatus" 
+                                                        value={formData.financialStatus} 
+                                                        onChange={handleInputChange} 
+                                                        className="w-full rounded-md border-neutral-200 dark:border-gray-700 bg-neutral-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-primary focus:border-primary p-2"
+                                                    >
+                                                        {FINANCIAL_STATUS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                    </select>
+                                                ) : (
+                                                    <span className={`inline-flex w-fit items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                        formData.financialStatus === 'Pago' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                                                        formData.financialStatus === 'Atrasado' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                                        formData.financialStatus === 'Faturado' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                        formData.financialStatus === 'Cancelado' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
+                                                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                                                    }`}>
+                                                        {formData.financialStatus}
+                                                    </span>
+                                                )}
+                                            </div>
+
                                             {currentStage === 'Perdido' && (<div className="flex flex-col gap-1 border-t border-solid border-gray-200 dark:border-gray-700 py-4 animate-fade-in"><p className="text-sm font-normal leading-normal text-red-500 dark:text-red-400">Motivo da Perda</p>{isEditing ? (<textarea name="lossReason" value={formData.lossReason} onChange={handleInputChange} rows={3} className="w-full rounded-md border-neutral-200 dark:border-gray-700 bg-neutral-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-primary focus:border-primary p-2" />) : (<p className="text-sm font-medium leading-normal text-gray-900 dark:text-white italic">{formData.lossReason || 'Nenhum motivo informado.'}</p>)}</div>)}
                                         </div>
                                     </div>
@@ -643,6 +722,16 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                                                             <Icon name="edit" /> Editar Conta
                                                         </button>
                                                     )}
+                                                </div>
+                                            ) : !contactValidation.valid ? (
+                                                <div className="flex flex-col items-center justify-center p-12 bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/30 rounded-xl text-center animate-scale-in">
+                                                    <div className="size-16 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 mb-4">
+                                                        <Icon name="person_alert" className="text-3xl" />
+                                                    </div>
+                                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Dados do Contato Incompletos</h3>
+                                                    <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm mb-6">
+                                                        Para agendar aulas experimentais, o contato principal ({associatedAccount?.mainContact || 'Desconhecido'}) precisa ter os seguintes campos preenchidos: <strong>{contactValidation.missing.join(', ')}</strong>.
+                                                    </p>
                                                 </div>
                                             ) : (
                                                 <>
@@ -829,6 +918,13 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                 account={associatedAccount}
                 onUpdate={handleUpdateAccountFromDetail}
                 onDelete={handleDeleteAccountFromDetail}
+            />
+
+            <AlertModal 
+                isOpen={validationAlert.isOpen}
+                onClose={() => setValidationAlert(prev => ({ ...prev, isOpen: false }))}
+                title={validationAlert.title}
+                message={validationAlert.message}
             />
         </>
     );

@@ -1,19 +1,24 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
 import { Icon } from './ui/Icon';
-import { INITIAL_NAV_ITEMS, INITIAL_CONTACTS_DATA } from '../constants';
+import { INITIAL_NAV_ITEMS } from '../constants';
 import { Contact, Account } from '../types';
 import { ContactDetailModal } from './ContactDetailModal';
 import { ContactFormModal } from './ContactFormModal';
-import { addAccount } from '../dataStore';
+import { addAccount, getContacts, updateContact, addContact, deleteContact } from '../dataStore';
 
 const ContactsPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [contacts, setContacts] = useState<Contact[]>(INITIAL_CONTACTS_DATA);
+    const [contacts, setContacts] = useState<Contact[]>(getContacts());
     
+    // Refresh contacts from store on mount
+    useEffect(() => {
+        setContacts(getContacts());
+    }, []);
+
     // State for the Detail Modal
     const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
     
@@ -45,11 +50,14 @@ const ContactsPage: React.FC = () => {
     };
 
     const handleUpdateContact = (updatedContact: Contact) => {
-        setContacts(prev => prev.map(c => c.id === updatedContact.id ? updatedContact : c));
+        updateContact(updatedContact);
+        setContacts(getContacts());
     };
 
     const handleDeleteContact = (contactId: string) => {
-        setContacts(prev => prev.filter(c => c.id !== contactId));
+        deleteContact(contactId);
+        setContacts(getContacts());
+        handleCloseModal();
     };
 
     const handleSaveNewContact = (newContact: Contact, newAccount?: Account) => {
@@ -57,7 +65,8 @@ const ContactsPage: React.FC = () => {
         if (newAccount) {
             addAccount(newAccount);
         }
-        setContacts(prev => [newContact, ...prev]);
+        addContact(newContact);
+        setContacts(getContacts());
         setIsAddContactModalOpen(false);
     };
 
@@ -127,16 +136,7 @@ const ContactsPage: React.FC = () => {
                                             className="hover:bg-neutral-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="flex-shrink-0 h-10 w-10">
-                                                        <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                                                            {contact.name.substring(0, 2).toUpperCase()}
-                                                        </div>
-                                                    </div>
-                                                    <div className="ml-4">
-                                                        <div className="text-sm font-bold text-gray-900 dark:text-gray-100">{contact.name}</div>
-                                                    </div>
-                                                </div>
+                                                <div className="text-sm font-bold text-gray-900 dark:text-gray-100">{contact.name}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-900 dark:text-gray-100 font-medium">{contact.account}</div>

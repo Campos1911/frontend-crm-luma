@@ -1,11 +1,13 @@
-import { ColumnData, ProposalColumnData, ProposalCardData, CardData, Proposal, Account, GlobalTask } from './types';
-import { INITIAL_FUNNEL_DATA, INITIAL_PROPOSALS_KANBAN_DATA, INITIAL_ACCOUNTS_DATA, INITIAL_TASKS_DATA } from './constants';
+
+import { ColumnData, ProposalColumnData, ProposalCardData, CardData, Proposal, Account, GlobalTask, Contact } from './types';
+import { INITIAL_FUNNEL_DATA, INITIAL_PROPOSALS_KANBAN_DATA, INITIAL_ACCOUNTS_DATA, INITIAL_TASKS_DATA, INITIAL_CONTACTS_DATA } from './constants';
 
 // Internal State Containers
 let opportunitiesState: ColumnData[] = JSON.parse(JSON.stringify(INITIAL_FUNNEL_DATA));
 let proposalsState: ProposalColumnData[] = JSON.parse(JSON.stringify(INITIAL_PROPOSALS_KANBAN_DATA));
 let accountsState: Account[] = JSON.parse(JSON.stringify(INITIAL_ACCOUNTS_DATA));
 let tasksState: GlobalTask[] = JSON.parse(JSON.stringify(INITIAL_TASKS_DATA));
+let contactsState: Contact[] = JSON.parse(JSON.stringify(INITIAL_CONTACTS_DATA));
 
 // --- Opportunities API ---
 
@@ -184,6 +186,24 @@ export const deleteAccount = (accountId: string) => {
 
 export const addAccount = (newAccount: Account) => {
     accountsState = [newAccount, ...accountsState];
+};
+
+// --- Contacts API ---
+
+export const getContacts = (): Contact[] => {
+    return contactsState;
+};
+
+export const updateContact = (updatedContact: Contact) => {
+    contactsState = contactsState.map(c => c.id === updatedContact.id ? updatedContact : c);
+};
+
+export const addContact = (newContact: Contact) => {
+    contactsState = [newContact, ...contactsState];
+};
+
+export const deleteContact = (contactId: string) => {
+    contactsState = contactsState.filter(c => c.id !== contactId);
 };
 
 // --- Tasks API ---

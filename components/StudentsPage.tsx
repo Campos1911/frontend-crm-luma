@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Sidebar } from './Sidebar';
 import { Button } from './ui/Button';
@@ -105,7 +106,6 @@ const StudentsPage: React.FC = () => {
                                 <thead className="bg-neutral-50 dark:bg-gray-800/50">
                                     <tr>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nome</th>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sobrenome</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Data de nascimento</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Escola</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Responsável Financeiro</th>
@@ -119,19 +119,7 @@ const StudentsPage: React.FC = () => {
                                             className="hover:bg-neutral-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="flex-shrink-0 h-10 w-10">
-                                                        <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                                                            {student.firstName.substring(0, 1).toUpperCase()}
-                                                        </div>
-                                                    </div>
-                                                    <div className="ml-4">
-                                                        <div className="text-sm font-bold text-gray-900 dark:text-gray-100">{student.firstName}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900 dark:text-gray-100 font-medium">{student.lastName}</div>
+                                                <div className="text-sm font-bold text-gray-900 dark:text-gray-100">{student.firstName} {student.lastName}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -154,7 +142,7 @@ const StudentsPage: React.FC = () => {
                                     ))}
                                     {filteredStudents.length === 0 && (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400 italic">
+                                            <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400 italic">
                                                 Nenhum aluno encontrado.
                                             </td>
                                         </tr>

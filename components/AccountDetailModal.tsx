@@ -3,11 +3,13 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Modal } from './ui/Modal';
 import { Account, Contact, CardData } from '../types';
 import { Icon } from './ui/Icon';
+import { Tag } from './ui/Tag';
 import { ConfirmDeleteModal } from './ConfirmDeleteModal';
 import { ContactDetailModal } from './ContactDetailModal';
 import { OpportunityFormModal } from './OpportunityFormModal';
+import { OpportunityDetailModal } from './OpportunityDetailModal';
 import { INITIAL_CONTACTS_DATA } from '../constants';
-import { addOpportunity } from '../dataStore';
+import { addOpportunity, getOpportunities, updateOpportunity, moveOpportunity, deleteOpportunity } from '../dataStore';
 
 interface AccountDetailModalProps {
     isOpen: boolean;
@@ -31,6 +33,11 @@ interface AccountContactMock {
     email: string;
     phone: string;
     isPrimary: boolean;
+}
+
+// Interface extendida para incluir o nome da coluna (Estágio)
+interface RelatedOpportunity extends CardData {
+    stage: string;
 }
 
 const MOCK_ACCOUNT_TASKS: Task[] = [
@@ -72,6 +79,10 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
     // Contacts List State
     const [contactsList, setContactsList] = useState<AccountContactMock[]>([]);
 
+    // Opportunities List State
+    const [relatedOpportunities, setRelatedOpportunities] = useState<RelatedOpportunity[]>([]);
+    const [selectedOpportunity, setSelectedOpportunity] = useState<RelatedOpportunity | null>(null);
+
     // Contact Search State
     const [isSearchingContact, setIsSearchingContact] = useState(false);
     const [contactSearchTerm, setContactSearchTerm] = useState('');
@@ -89,6 +100,22 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
     const [phoneCountryCode, setPhoneCountryCode] = useState('+55');
     const [phoneNumber, setPhoneNumber] = useState('');
 
+    const fetchRelatedOpportunities = () => {
+        if (!account) return;
+        const allColumns = getOpportunities();
+        const foundOpps: RelatedOpportunity[] = [];
+
+        allColumns.forEach(col => {
+            col.cards.forEach(card => {
+                // In the current data model, the card name is the account name
+                if (card.name === account.name) {
+                    foundOpps.push({ ...card, stage: col.title });
+                }
+            });
+        });
+        setRelatedOpportunities(foundOpps);
+    };
+
     useEffect(() => {
         if (account) {
             setFormData(JSON.parse(JSON.stringify(account)));
@@ -98,6 +125,7 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
             setIsAddingTask(false);
             setIsSearchingContact(false);
             setContactSearchTerm('');
+            setSelectedOpportunity(null);
 
             // Parse phone number
             const phone = account.phone || '';
@@ -141,6 +169,7 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
             }
             
             setContactsList(initialContacts);
+            fetchRelatedOpportunities();
         }
     }, [account, isOpen]);
 
@@ -311,7 +340,48 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
         };
 
         addOpportunity(newCard);
+        fetchRelatedOpportunities(); // Refresh the list
         setIsAddOpportunityModalOpen(false);
+    };
+
+    // Opportunity Detail Handlers
+    const handleOpportunityClick = (opp: RelatedOpportunity) => {
+        setSelectedOpportunity(opp);
+    };
+
+    const handleMoveOpportunityToStage = (cardId: string, targetStageTitle: string) => {
+        if (selectedOpportunity) {
+            moveOpportunity(cardId, selectedOpportunity.stage, targetStageTitle); // Simplified call as moveOpportunity expects sourceColId
+            // However, moveOpportunity needs sourceColId (column ID) not title.
+            // Since we only have titles here easily, we need to map titles to IDs or let the store handle it.
+            // Assuming we can find the column ID by traversing getOpportunities inside the component or store helpers.
+            // For now, let's fetch current data to find IDs.
+            const allColumns = getOpportunities();
+            const sourceCol = allColumns.find(col => col.title === selectedOpportunity.stage);
+            const destCol = allColumns.find(col => col.title === targetStageTitle);
+            
+            if (sourceCol && destCol) {
+                moveOpportunity(cardId, sourceCol.id, destCol.id);
+                fetchRelatedOpportunities();
+                // Update selectedOpportunity local state to reflect new stage
+                setSelectedOpportunity(prev => prev ? { ...prev, stage: targetStageTitle } : null);
+            }
+        }
+    };
+
+    const handleDeleteOpportunity = (cardId: string) => {
+         deleteOpportunity(cardId);
+         fetchRelatedOpportunities();
+         setSelectedOpportunity(null);
+    };
+    
+    const handleUpdateOpportunity = (updatedCard: CardData) => {
+        updateOpportunity(updatedCard);
+        fetchRelatedOpportunities();
+        // Update selectedOpportunity local state
+        if (selectedOpportunity) {
+            setSelectedOpportunity(prev => prev ? { ...prev, ...updatedCard } : null);
+        }
     };
 
     const inputClass = "w-full p-2 text-sm font-medium text-[#121118] dark:text-[#FFFFFF] bg-[#f1f0f4] dark:bg-[#121118]/50 border border-[#dddce5] dark:border-[#686388] rounded-md focus:ring-[#6258A6] focus:border-[#6258A6] outline-none transition-all";
@@ -393,6 +463,7 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
                                 </div>
                             </div>
                             <div className="pt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                                {/* ... (fields omitted for brevity, no changes here) ... */}
                                 <div className="flex flex-col gap-1 py-2">
                                     <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Telefone</p>
                                     {isEditing ? (
@@ -597,9 +668,44 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
                                     
                                     {activeTab === 'Oportunidades' && (
                                          <div className="flex flex-col gap-6">
-                                            <div className="flex items-center justify-center p-8 bg-neutral-50 dark:bg-gray-800/20 border border-neutral-200 dark:border-gray-700 rounded-xl">
-                                                <p className="text-gray-500 dark:text-gray-400 italic">Nenhuma oportunidade recente.</p>
-                                            </div>
+                                            {relatedOpportunities.length > 0 ? (
+                                                <div className="overflow-x-auto border border-neutral-200 dark:border-gray-700 rounded-xl bg-white dark:bg-[#131121]">
+                                                    <table className="min-w-full text-sm divide-y divide-neutral-200 dark:divide-gray-700">
+                                                        <thead className="bg-neutral-50 dark:bg-gray-800/50">
+                                                            <tr>
+                                                                <th className="px-6 py-3 text-left font-bold text-[#121118] dark:text-white" scope="col">ID</th>
+                                                                <th className="px-6 py-3 text-left font-bold text-[#121118] dark:text-white" scope="col">Fase</th>
+                                                                <th className="px-6 py-3 text-left font-bold text-[#121118] dark:text-white" scope="col">Valor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="divide-y divide-neutral-200 dark:divide-gray-700">
+                                                            {relatedOpportunities.map((opp) => (
+                                                                <tr key={opp.id} className="hover:bg-neutral-50 dark:hover:bg-gray-800/50 transition-colors">
+                                                                    <td className="whitespace-nowrap px-6 py-4">
+                                                                        <button 
+                                                                            onClick={() => handleOpportunityClick(opp)}
+                                                                            className="text-primary hover:underline font-bold text-sm"
+                                                                        >
+                                                                            #{opp.id.replace('c', '')}
+                                                                        </button>
+                                                                    </td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">
+                                                                        <Tag color={opp.statusColor}>{opp.status}</Tag>
+                                                                    </td>
+                                                                    <td className="whitespace-nowrap px-6 py-4 text-[#121118] dark:text-white font-medium">
+                                                                        {opp.amount}
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-center p-8 bg-neutral-50 dark:bg-gray-800/20 border border-neutral-200 dark:border-gray-700 rounded-xl">
+                                                    <p className="text-gray-500 dark:text-gray-400 italic">Nenhuma oportunidade vinculada a esta conta.</p>
+                                                </div>
+                                            )}
+                                            
                                             {!isEditing && (
                                                 <div className="flex justify-start">
                                                     <button 
@@ -716,7 +822,20 @@ export const AccountDetailModal: React.FC<AccountDetailModalProps> = ({ isOpen, 
                 isOpen={isAddOpportunityModalOpen}
                 onClose={() => setIsAddOpportunityModalOpen(false)}
                 onSave={handleSaveNewOpportunity}
+                initialAccountName={account.name}
             />
+
+            {selectedOpportunity && (
+                <OpportunityDetailModal 
+                    isOpen={!!selectedOpportunity}
+                    onClose={() => setSelectedOpportunity(null)}
+                    opportunity={selectedOpportunity}
+                    currentStage={selectedOpportunity.stage}
+                    onUpdate={handleUpdateOpportunity}
+                    onMove={handleMoveOpportunityToStage}
+                    onDelete={handleDeleteOpportunity}
+                />
+            )}
 
             {account && (
                 <ConfirmDeleteModal
