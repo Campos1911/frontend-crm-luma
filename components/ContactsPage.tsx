@@ -136,16 +136,7 @@ const ContactsPage: React.FC = () => {
                                             className="hover:bg-neutral-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="flex-shrink-0 h-10 w-10">
-                                                        <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                                                            {contact.name.substring(0, 2).toUpperCase()}
-                                                        </div>
-                                                    </div>
-                                                    <div className="ml-4">
-                                                        <div className="text-sm font-bold text-gray-900 dark:text-gray-100">{contact.name}</div>
-                                                    </div>
-                                                </div>
+                                                <div className="text-sm font-bold text-gray-900 dark:text-gray-100">{contact.name}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-900 dark:text-gray-100 font-medium">{contact.account}</div>
