@@ -1,4 +1,5 @@
 
+
 export type StatusColor = 'blue' | 'orange' | 'purple' | 'yellow' | 'green' | 'red';
 
 export interface NavItem {
@@ -26,6 +27,7 @@ export interface CardData {
     closeDate?: string;
     lossReason?: string;
     experimentalClasses?: ExperimentalClass[];
+    financialStatus?: string;
 }
 
 export interface ColumnData {

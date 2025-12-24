@@ -90,6 +90,14 @@ const DISCIPLINES = [
     'Geografia'
 ];
 
+const FINANCIAL_STATUS_OPTIONS = [
+    'Pendente',
+    'Faturado',
+    'Pago',
+    'Atrasado',
+    'Cancelado'
+];
+
 const TimelineItem: React.FC<{ icon: string; title: string; desc: string; date: string; iconClass?: string }> = ({ icon, title, desc, date, iconClass }) => (
     <div className="flex gap-4 items-start group animate-fade-in">
         <div className="flex flex-col items-center mr-2">
@@ -178,7 +186,8 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                 type: opportunity.type || 'Novo negócio',
                 closeDate: opportunity.closeDate || '2024-12-15',
                 lossReason: opportunity.lossReason || '',
-                experimentalClasses: opportunity.experimentalClasses || []
+                experimentalClasses: opportunity.experimentalClasses || [],
+                financialStatus: opportunity.financialStatus || 'Pendente'
             });
             
             const loadedProposals = getProposalsByOpportunity(opportunity.id);
@@ -319,7 +328,8 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                 type: opportunity.type || 'Novo negócio',
                 closeDate: opportunity.closeDate || '2024-12-15',
                 lossReason: opportunity.lossReason || '',
-                experimentalClasses: opportunity.experimentalClasses || []
+                experimentalClasses: opportunity.experimentalClasses || [],
+                financialStatus: opportunity.financialStatus || 'Pendente'
             });
             setExperimentalClasses(opportunity.experimentalClasses || []);
         }
@@ -631,6 +641,32 @@ export const OpportunityDetailModal: React.FC<OpportunityDetailModalProps> = ({
                                                 {isEditing ? (<select name="type" value={formData.type} onChange={handleInputChange} className="w-full rounded-md border-neutral-200 dark:border-gray-700 bg-neutral-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-primary focus:border-primary p-2"><option value="Novo negócio">Novo negócio</option><option value="Recompra">Recompra</option><option value="Reativação">Reativação</option></select>) : (<p className="text-sm font-medium leading-normal text-gray-900 dark:text-white">{formData.type}</p>)}
                                             </div>
                                             <div className="flex flex-col gap-1 border-t border-solid border-gray-200 dark:border-gray-700 py-4"><p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Valor</p><p className="text-sm font-medium leading-normal text-gray-900 dark:text-white">{opportunity.amount}</p></div>
+                                            
+                                            {/* Financial Status Field */}
+                                            <div className="flex flex-col gap-1 border-t border-solid border-gray-200 dark:border-gray-700 py-4">
+                                                <p className="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Status Financeiro</p>
+                                                {isEditing ? (
+                                                    <select 
+                                                        name="financialStatus" 
+                                                        value={formData.financialStatus} 
+                                                        onChange={handleInputChange} 
+                                                        className="w-full rounded-md border-neutral-200 dark:border-gray-700 bg-neutral-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-primary focus:border-primary p-2"
+                                                    >
+                                                        {FINANCIAL_STATUS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                    </select>
+                                                ) : (
+                                                    <span className={`inline-flex w-fit items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                        formData.financialStatus === 'Pago' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                                                        formData.financialStatus === 'Atrasado' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                                        formData.financialStatus === 'Faturado' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                        formData.financialStatus === 'Cancelado' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
+                                                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                                                    }`}>
+                                                        {formData.financialStatus}
+                                                    </span>
+                                                )}
+                                            </div>
+
                                             {currentStage === 'Perdido' && (<div className="flex flex-col gap-1 border-t border-solid border-gray-200 dark:border-gray-700 py-4 animate-fade-in"><p className="text-sm font-normal leading-normal text-red-500 dark:text-red-400">Motivo da Perda</p>{isEditing ? (<textarea name="lossReason" value={formData.lossReason} onChange={handleInputChange} rows={3} className="w-full rounded-md border-neutral-200 dark:border-gray-700 bg-neutral-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm focus:ring-primary focus:border-primary p-2" />) : (<p className="text-sm font-medium leading-normal text-gray-900 dark:text-white italic">{formData.lossReason || 'Nenhum motivo informado.'}</p>)}</div>)}
                                         </div>
                                     </div>
