@@ -9,8 +9,7 @@ import { ProductDetailModal, ProductResult } from './ProductDetailModal';
 import { ContactDetailModal } from './ContactDetailModal';
 import { OpportunityDetailModal } from './OpportunityDetailModal';
 import { AlertModal } from './ui/AlertModal';
-import { getOpportunityById, updateOpportunity, moveOpportunity, deleteOpportunity } from '../dataStore';
-import { INITIAL_CONTACTS_DATA } from '../constants';
+import { getOpportunityById, updateOpportunity, moveOpportunity, deleteOpportunity, getContacts, updateContact } from '../dataStore';
 
 interface ProposalDetailModalProps {
     isOpen: boolean;
@@ -232,9 +231,11 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
     const discountValue = parseCurrency(discount);
     const totalValue = Math.max(0, subtotalValue - discountValue);
 
+    const allContacts = useMemo(() => getContacts(), [isOpen, currentContactName]);
+
     // Look up the contact object based on the currently selected name
     const fullContact = useMemo(() => {
-        const found = INITIAL_CONTACTS_DATA.find(c => c.name === currentContactName);
+        const found = allContacts.find(c => c.name === currentContactName);
         if (found) return found;
         
         // Fallback: Create a temporary contact object if name exists but not in DB
@@ -251,13 +252,13 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
             } as Contact;
         }
         return null;
-    }, [currentContactName]);
+    }, [currentContactName, allContacts]);
 
     // Filter contacts for dropdown
     const filteredContacts = useMemo(() => {
         const term = currentContactName.toLowerCase();
-        return INITIAL_CONTACTS_DATA.filter(c => c.name.toLowerCase().includes(term));
-    }, [currentContactName]);
+        return allContacts.filter(c => c.name.toLowerCase().includes(term));
+    }, [currentContactName, allContacts]);
 
     const fullOpportunity = useMemo(() => {
         if (!proposal?.opportunityId) return null;
@@ -500,6 +501,14 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
     const handleContactSelect = (name: string) => {
         setCurrentContactName(name);
         setIsContactSearchOpen(false);
+    };
+
+    const handleContactUpdate = (updatedContact: Contact) => {
+        updateContact(updatedContact);
+        // Update local state if the name changed to keep UI consistent
+        if (updatedContact.name !== currentContactName) {
+            setCurrentContactName(updatedContact.name);
+        }
     };
 
     const inputClass = "w-full p-2 text-sm font-medium text-[#121118] dark:text-[#FFFFFF] bg-[#f1f0f4] dark:bg-[#121118]/50 border border-[#dddce5] dark:border-[#686388] rounded-md focus:ring-[#6258A6] focus:border-[#6258A6] outline-none transition-all";
@@ -1042,6 +1051,7 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
                 isOpen={isContactModalOpen}
                 onClose={() => setIsContactModalOpen(false)}
                 contact={fullContact}
+                onUpdate={handleContactUpdate}
             />
 
             {fullOpportunity && (

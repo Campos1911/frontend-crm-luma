@@ -1,19 +1,24 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
 import { Icon } from './ui/Icon';
-import { INITIAL_NAV_ITEMS, INITIAL_CONTACTS_DATA } from '../constants';
+import { INITIAL_NAV_ITEMS } from '../constants';
 import { Contact, Account } from '../types';
 import { ContactDetailModal } from './ContactDetailModal';
 import { ContactFormModal } from './ContactFormModal';
-import { addAccount } from '../dataStore';
+import { addAccount, getContacts, updateContact, addContact, deleteContact } from '../dataStore';
 
 const ContactsPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [contacts, setContacts] = useState<Contact[]>(INITIAL_CONTACTS_DATA);
+    const [contacts, setContacts] = useState<Contact[]>(getContacts());
     
+    // Refresh contacts from store on mount
+    useEffect(() => {
+        setContacts(getContacts());
+    }, []);
+
     // State for the Detail Modal
     const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
     
@@ -45,11 +50,14 @@ const ContactsPage: React.FC = () => {
     };
 
     const handleUpdateContact = (updatedContact: Contact) => {
-        setContacts(prev => prev.map(c => c.id === updatedContact.id ? updatedContact : c));
+        updateContact(updatedContact);
+        setContacts(getContacts());
     };
 
     const handleDeleteContact = (contactId: string) => {
-        setContacts(prev => prev.filter(c => c.id !== contactId));
+        deleteContact(contactId);
+        setContacts(getContacts());
+        handleCloseModal();
     };
 
     const handleSaveNewContact = (newContact: Contact, newAccount?: Account) => {
@@ -57,7 +65,8 @@ const ContactsPage: React.FC = () => {
         if (newAccount) {
             addAccount(newAccount);
         }
-        setContacts(prev => [newContact, ...prev]);
+        addContact(newContact);
+        setContacts(getContacts());
         setIsAddContactModalOpen(false);
     };
 
