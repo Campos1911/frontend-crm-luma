@@ -257,7 +257,12 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
         
         setFormData(updatedContact);
         if (onUpdate) {
-            onUpdate(updatedContact);
+            // Need to merge name here as well if updating immediately
+            const contactToUpdate = {
+                ...updatedContact,
+                name: `${firstName} ${lastName}`.trim()
+            };
+            onUpdate(contactToUpdate);
         }
         setPendingDeleteStudentId(null);
     };
@@ -314,7 +319,13 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
         };
 
         setFormData(updatedContact);
-        if (onUpdate) onUpdate(updatedContact);
+        if (onUpdate) {
+             const contactToUpdate = {
+                ...updatedContact,
+                name: `${firstName} ${lastName}`.trim()
+            };
+            onUpdate(contactToUpdate);
+        }
         
         // Reset Search
         setIsStudentSearchOpen(false);
@@ -347,7 +358,13 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
         };
 
         setFormData(updatedContact);
-        if (onUpdate) onUpdate(updatedContact);
+        if (onUpdate) {
+             const contactToUpdate = {
+                ...updatedContact,
+                name: `${firstName} ${lastName}`.trim()
+            };
+            onUpdate(contactToUpdate);
+        }
         
         setIsStudentFormModalOpen(false);
     };

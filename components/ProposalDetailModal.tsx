@@ -347,6 +347,43 @@ export const ProposalDetailModal: React.FC<ProposalDetailModalProps> = ({
                 });
                 return;
             }
+
+            // Validar dados do contato
+            if (!fullContact) {
+                setValidationAlert({
+                    isOpen: true,
+                    title: 'Contato Necessário',
+                    message: 'Para aceitar a proposta, é necessário vincular um contato.'
+                });
+                return;
+            }
+
+            const missingContactFields: string[] = [];
+            
+            // Verifica Nome e Sobrenome (assumindo que string contém espaço)
+            if (!fullContact.name || fullContact.name.trim().split(/\s+/).length < 2) {
+                missingContactFields.push('Nome e Sobrenome');
+            }
+            if (!fullContact.account) missingContactFields.push('Conta');
+            if (!fullContact.cpf) missingContactFields.push('CPF');
+            if (!fullContact.phone) missingContactFields.push('Telefone');
+            if (!fullContact.dateOfBirth) missingContactFields.push('Data de Nascimento');
+            if (!fullContact.email) missingContactFields.push('Email');
+            
+            const addr = fullContact.address || {} as any;
+            if (!addr.country && !fullContact.country) missingContactFields.push('País');
+            if (!addr.postalCode) missingContactFields.push('CEP');
+            if (!addr.street) missingContactFields.push('Rua');
+            if (!addr.number) missingContactFields.push('Número');
+
+            if (missingContactFields.length > 0) {
+                setValidationAlert({
+                    isOpen: true,
+                    title: 'Dados do Contato Incompletos',
+                    message: `Para alterar o status da proposta para "Aceita", o contato vinculado deve possuir os seguintes campos preenchidos: ${missingContactFields.join(', ')}.`
+                });
+                return;
+            }
         }
 
         if (newStatus !== proposal.status) {
