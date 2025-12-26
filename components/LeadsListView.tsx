@@ -2,7 +2,6 @@
 import React from 'react';
 import { LeadColumnData, LeadCardData } from '../types';
 import { Icon } from './ui/Icon';
-import { Avatar } from './ui/Avatar';
 
 interface LeadsListViewProps {
     data: LeadColumnData[];

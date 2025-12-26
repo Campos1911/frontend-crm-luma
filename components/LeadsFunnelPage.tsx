@@ -6,7 +6,7 @@ import { LeadsListView } from './LeadsListView';
 import { Button } from './ui/Button';
 import { Avatar } from './ui/Avatar';
 import { Icon } from './ui/Icon';
-import { INITIAL_LEADS_DATA, INITIAL_NAV_ITEMS, INITIAL_CONTACTS_DATA } from '../constants';
+import { INITIAL_LEADS_DATA, INITIAL_NAV_ITEMS } from '../constants';
 import { LeadColumnData, LeadCardData } from '../types';
 import { LeadFormModal } from './LeadFormModal';
 import { LeadDetailModal } from './LeadDetailModal';
@@ -319,4 +319,3 @@ const LeadsFunnelPage: React.FC = () => {
 };
 
 export default LeadsFunnelPage;
-    
