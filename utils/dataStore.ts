@@ -1,5 +1,5 @@
 
-import { ColumnData, ProposalColumnData, ProposalCardData, CardData, Proposal, Account, GlobalTask, Contact } from './types';
+import { ColumnData, ProposalColumnData, ProposalCardData, CardData, Proposal, Account, GlobalTask, Contact } from '../types';
 import { INITIAL_FUNNEL_DATA, INITIAL_PROPOSALS_KANBAN_DATA, INITIAL_ACCOUNTS_DATA, INITIAL_TASKS_DATA, INITIAL_CONTACTS_DATA } from './constants';
 
 // Internal State Containers

@@ -113,11 +113,13 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, o
         }
     }
     
+    // Fix: Added required stage property
     onSave({
       name: formData.name,
       phone: formattedPhone,
       email: formData.email,
       source: formData.source || 'Outros',
+      stage: 'Novo Lead',
       note: formData.note
     });
     
@@ -231,7 +233,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, o
                 value={formData.note}
                 onChange={handleChange}
                 className="form-textarea flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-[#131217] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d8d7e0] dark:border-primary/30 bg-white dark:bg-background-dark focus:border-primary placeholder:text-[#696581] p-[15px] text-base font-normal leading-normal" 
-                placeholder="Adicione uma observação sobre o lead..." 
+                placeholder="Adicione uma observação sobre le lead..." 
                 rows={4}
               ></textarea>
             </label>

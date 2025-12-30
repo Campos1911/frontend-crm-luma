@@ -1,5 +1,4 @@
 
-
 export type StatusColor = 'blue' | 'orange' | 'purple' | 'yellow' | 'green' | 'red';
 
 export interface NavItem {
@@ -42,6 +41,7 @@ export interface LeadCardData {
     email: string;
     phone: string;
     source: string;
+    stage: string; // Atributo principal de agrupamento
     company?: string;
     priority?: string;
     medium?: string;
@@ -50,6 +50,9 @@ export interface LeadCardData {
     content?: string;
     note?: string;
     disqualificationReason?: string;
+    tasksCount?: number;
+    recordsCount?: number;
+    updatedAt?: string | null;
 }
 
 export interface LeadColumnData {
@@ -203,4 +206,43 @@ export interface GlobalTask {
     createdAt: string;
     completedAt?: string;
     description?: string;
+}
+
+export type WebhookEvent = 'opportunity_created' | 'lead_qualified' | 'proposal_accepted' | 'stats_request';
+
+export interface WebhookPayload {
+    event: WebhookEvent;
+    timestamp: string;
+    source: 'luma_crm_frontend';
+    data: any;
+}
+
+export interface DashboardStats {
+    totalValue: string;
+    conversionRate: string;
+    activeLeads: number;
+    pendingProposals: number;
+    growthPercentage: number;
+    lastUpdate: string;
+}
+
+export interface ApiLead {
+    Id: number;
+    CreatedAt: string;
+    UpdatedAt: string | null;
+    phone: string | null;
+    email: string | null;
+    stage: string;
+    ddi: number | null;
+    name: string;
+    motivo_desqualificacao: string | null;
+    registros_lead: number;
+    id_externo_cep: string | null;
+    tasks: number;
+    deleted: boolean;
+    observacao: string | null;
+}
+
+export interface LeadsApiResponse {
+    [category: string]: ApiLead[];
 }

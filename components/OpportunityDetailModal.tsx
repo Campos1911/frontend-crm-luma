@@ -9,8 +9,8 @@ import { LossReasonModal } from './LossReasonModal';
 import { ProposalDetailModal } from './ProposalDetailModal';
 import { AccountDetailModal } from './AccountDetailModal';
 import { AlertModal } from './ui/AlertModal';
-import { getProposalsByOpportunity, updateProposal, addProposal, getAccounts, updateAccount, deleteAccount, getContacts } from '../dataStore';
-import { INITIAL_STUDENTS_LIST } from '../constants';
+import { getProposalsByOpportunity, updateProposal, addProposal, getAccounts, updateAccount, deleteAccount, getContacts } from '../utils/dataStore';
+import { INITIAL_STUDENTS_LIST } from '../utils/constants';
 
 interface OpportunityDetailModalProps {
     isOpen: boolean;

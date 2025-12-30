@@ -9,7 +9,7 @@ import { ProductDetailModal, ProductResult } from './ProductDetailModal';
 import { ContactDetailModal } from './ContactDetailModal';
 import { OpportunityDetailModal } from './OpportunityDetailModal';
 import { AlertModal } from './ui/AlertModal';
-import { getOpportunityById, updateOpportunity, moveOpportunity, deleteOpportunity, getContacts, updateContact } from '../dataStore';
+import { getOpportunityById, updateOpportunity, moveOpportunity, deleteOpportunity, getContacts, updateContact } from '../utils/dataStore';
 
 interface ProposalDetailModalProps {
     isOpen: boolean;
@@ -42,11 +42,11 @@ const Step: React.FC<{ label: string; active: boolean; completed: boolean; onCli
 
 // Initial Mock Data for the editable section
 const DEFAULT_PAYMENT_DATA: PaymentInfo = {
-    installments: '12x',
-    expiryDate: '2024-12-31',
-    paymentMethods: 'Cartão de Crédito, Boleto',
-    contractPeriod: '12 meses',
-    contractStatus: 'Pendente',
+    installments: '',
+    expiryDate: '',
+    paymentMethods: '',
+    contractPeriod: '',
+    contractStatus: 'Rascunho',
     description: '',
     automatedContract: true
 };
@@ -82,12 +82,12 @@ const MOCK_PRODUCTS: ProductGroup[] = [
         id: 'prod-1',
         name: 'Trilha',
         quantity: '1x',
-        price: 'R$ 15.000,00',
+        price: 'R$ 0,00',
         items: [
-            { id: 'i1', label: 'Aulas', tag: 'Matemática', quantity: '10x' },
-            { id: 'i2', label: 'Avaliações diagnósticas', tag: 'Matemática', quantity: '2x' },
-            { id: 'i3', label: 'Avaliações de progresso', tag: 'Matemática', quantity: '4x' },
-            { id: 'i4', label: 'Suportes pedagógicos', quantity: '1x' }
+            { id: 'i1', label: 'Aulas', tag: 'Matemática', quantity: '62x' },
+            { id: 'i2', label: 'Avaliações diagnósticas', tag: 'Matemática', quantity: '1x' },
+            { id: 'i3', label: 'Avaliações de progresso', tag: 'Matemática', quantity: '3x' },
+            { id: 'i4', label: 'Suportes pedagógicos', quantity: '2x' }
         ]
     }
 ];

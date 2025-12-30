@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Modal } from './ui/Modal';
 import { GlobalTask, RelatedObjectType } from '../types';
 import { Icon } from './ui/Icon';
-import { INITIAL_CONTACTS_DATA, INITIAL_LEADS_DATA } from '../constants';
+import { INITIAL_CONTACTS_DATA } from '../constants';
 import { getAccounts, getOpportunities } from '../dataStore';
+import { useLeads } from '../hooks/useLeads';
 
 interface TaskFormModalProps {
     isOpen: boolean;
@@ -19,10 +21,13 @@ const OBJECT_TYPES: { value: RelatedObjectType; label: string; icon: string }[] 
 ];
 
 export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, onSave }) => {
+    // Hooks dinâmicos
+    const { leads } = useLeads();
+
     // Form States
     const [title, setTitle] = useState('');
     const [dueDate, setDueDate] = useState('');
-    const [assignee, setAssignee] = useState('Você'); // Default to current user
+    const [assignee, setAssignee] = useState('Você');
     const [description, setDescription] = useState('');
     const [relatedObjectType, setRelatedObjectType] = useState<RelatedObjectType>('conta');
     
@@ -37,7 +42,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
     useEffect(() => {
         if (isOpen) {
             setTitle('');
-            setDueDate(new Date().toISOString().split('T')[0]); // Default today
+            setDueDate(new Date().toISOString().split('T')[0]);
             setAssignee('Você');
             setDescription('');
             setRelatedObjectType('conta');
@@ -47,7 +52,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
         }
     }, [isOpen]);
 
-    // Close dropdown on click outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -58,7 +62,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Dynamic Data Source based on Selected Type
     const filteredObjects = useMemo(() => {
         const term = objectSearch.toLowerCase();
         let data: string[] = [];
@@ -71,7 +74,8 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
                 data = INITIAL_CONTACTS_DATA.map(c => c.name);
                 break;
             case 'lead':
-                data = INITIAL_LEADS_DATA.flatMap(col => col.cards.map(c => c.name));
+                // Busca nos leads dinâmicos do hook
+                data = leads.flatMap(col => col.cards.map(c => c.name));
                 break;
             case 'oportunidade':
                 data = getOpportunities().flatMap(col => col.cards.map(c => c.name));
@@ -79,7 +83,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
         }
 
         return data.filter(item => item.toLowerCase().includes(term));
-    }, [relatedObjectType, objectSearch]);
+    }, [relatedObjectType, objectSearch, leads]);
 
     const handleObjectSelect = (name: string) => {
         setSelectedObjectName(name);
@@ -129,7 +133,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
                 </div>
 
                 <div className="p-6 flex flex-col gap-6 max-h-[70vh] overflow-y-auto">
-                    {/* Title */}
                     <div>
                         <label className={labelClasses}>Nome da Tarefa</label>
                         <input
@@ -143,7 +146,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Due Date */}
                         <div>
                             <label className={labelClasses}>Data de Vencimento</label>
                             <input
@@ -153,7 +155,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
                                 className={inputClasses}
                             />
                         </div>
-                        {/* Assignee */}
                         <div>
                             <label className={labelClasses}>Responsável</label>
                             <input
@@ -168,9 +169,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
 
                     <hr className="border-neutral-100 dark:border-gray-800" />
 
-                    {/* Related Object Logic */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Object Type */}
                         <div className="md:col-span-1">
                             <label className={labelClasses}>Relacionado a</label>
                             <div className="relative">
@@ -193,7 +192,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
                             </div>
                         </div>
 
-                        {/* Object Search */}
                         <div className="md:col-span-2 relative" ref={dropdownRef}>
                             <label className={labelClasses}>Nome do Registro</label>
                             <div className="relative">
@@ -237,7 +235,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
                                             </button>
                                         ))
                                     ) : (
-                                        <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 italic">
+                                        <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 italic text-center">
                                             Nenhum registro encontrado.
                                         </div>
                                     )}
@@ -246,7 +244,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, o
                         </div>
                     </div>
 
-                    {/* Description */}
                     <div>
                         <label className={labelClasses}>Descrição / Observações</label>
                         <textarea

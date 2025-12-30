@@ -1,12 +1,13 @@
+
 import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import SalesFunnelPage from './components/SalesFunnelPage';
-import LeadsFunnelPage from './components/LeadsFunnelPage';
-import ProposalsPage from './components/ProposalsPage';
-import ContactsPage from './components/ContactsPage';
-import StudentsPage from './components/StudentsPage';
-import AccountsPage from './components/AccountsPage';
-import TasksPage from './components/TasksPage';
+import SalesFunnelPage from './pages/SalesFunnelPage';
+import LeadsFunnelPage from './pages/LeadsFunnelPage';
+import ProposalsPage from './pages/ProposalsPage';
+import ContactsPage from './pages/ContactsPage';
+import StudentsPage from './pages/StudentsPage';
+import AccountsPage from './pages/AccountsPage';
+import TasksPage from './pages/TasksPage';
 
 const App: React.FC = () => {
   return (

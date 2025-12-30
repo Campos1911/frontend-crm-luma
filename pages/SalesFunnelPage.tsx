@@ -1,18 +1,17 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Sidebar } from './Sidebar';
-import { KanbanBoard } from './KanbanBoard';
-import { SalesListView } from './SalesListView';
-import { Button } from './ui/Button';
-import { Avatar } from './ui/Avatar';
-import { Icon } from './ui/Icon';
-import { INITIAL_NAV_ITEMS } from '../constants';
+import { Sidebar } from '../components/Sidebar';
+import { KanbanBoard } from '../components/KanbanBoard';
+import { SalesListView } from '../components/SalesListView';
+import { Button } from '../components/ui/Button';
+import { Avatar } from '../components/ui/Avatar';
+import { Icon } from '../components/ui/Icon';
+import { INITIAL_NAV_ITEMS } from '../utils/constants';
 import { ColumnData, StatusColor, CardData } from '../types';
-import { OpportunityDetailModal } from './OpportunityDetailModal';
-import { LossReasonModal } from './LossReasonModal';
-import { OpportunityFormModal } from './OpportunityFormModal';
-import { AlertModal } from './ui/AlertModal';
-import { getOpportunities, updateOpportunity, moveOpportunity, addOpportunity, deleteOpportunity, getProposalsByOpportunity } from '../dataStore';
+import { OpportunityDetailModal } from '../components/OpportunityDetailModal';
+import { LossReasonModal } from '../components/LossReasonModal';
+import { OpportunityFormModal } from '../components/OpportunityFormModal';
+import { getOpportunities, updateOpportunity, moveOpportunity, addOpportunity, deleteOpportunity, getProposalsByOpportunity } from '../utils/dataStore';
 import { useStats } from '../hooks/useStats';
 
 const SalesFunnelPage: React.FC = () => {
@@ -30,15 +29,6 @@ const SalesFunnelPage: React.FC = () => {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-
-    const [validationAlert, setValidationAlert] = useState<{isOpen: boolean, title: string, message: string}>({
-        isOpen: false,
-        title: '',
-        message: ''
-    });
-
-    const [isLossModalOpen, setIsLossModalOpen] = useState(false);
-    const [pendingMove, setPendingMove] = useState<{cardId: string, sourceColId: string, destColId: string} | null>(null);
 
     const filteredData = useMemo(() => {
         if (!searchTerm) return columns;
